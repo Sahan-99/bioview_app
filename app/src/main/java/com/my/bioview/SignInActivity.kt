@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
+import com.google.android.material.textfield.TextInputEditText
 import android.view.KeyEvent
 
 class SignInActivity : AppCompatActivity() {
@@ -17,8 +17,8 @@ class SignInActivity : AppCompatActivity() {
         val btnSignIn = findViewById<Button>(R.id.btnSignIn)
         val btnSignUp = findViewById<TextView>(R.id.btnSignUp)
         val btnForgotPassword = findViewById<TextView>(R.id.btnForgotPassword)
-        val editTextEmail = findViewById<EditText>(R.id.editTextEmail)
-        val editTextPassword = findViewById<EditText>(R.id.editTextPassword)
+        val editTextEmail = findViewById<TextInputEditText>(R.id.editTextEmail)
+        val editTextPassword = findViewById<TextInputEditText>(R.id.editTextPassword)
 
         btnSignIn.setOnClickListener {
             // Placeholder for authentication logic
@@ -31,7 +31,6 @@ class SignInActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else {
-                // Show error (for now, just proceed; add validation as needed)
                 editTextEmail.error = if (email.isEmpty()) "Email is required" else null
                 editTextPassword.error = if (password.isEmpty()) "Password is required" else null
             }
@@ -40,12 +39,20 @@ class SignInActivity : AppCompatActivity() {
         btnSignUp.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish()
         }
 
         btnForgotPassword.setOnClickListener {
             // Placeholder for forgot password logic
             // Could navigate to a ForgotPasswordActivity if needed
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
