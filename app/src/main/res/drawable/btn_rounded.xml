@@ -2,14 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Solid fill  -->
     <solid android:color="#1E90FF"/>
-    
+
     <!-- Rounded corners (12 dp radius) -->
     <corners android:radius="15dp"/>
-
-    <!-- Extra padding inside (optional) -->
-    <padding
-        android:left="8dp"
-        android:top="8dp"
-        android:right="8dp"
-        android:bottom="8dp"/>
+    
 </shape>

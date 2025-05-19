@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
-import android.view.KeyEvent
 
 class SignInActivity : AppCompatActivity() {
 
@@ -31,13 +31,15 @@ class SignInActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else {
-                editTextEmail.error = if (email.isEmpty()) "Email is required" else null
-                editTextPassword.error = if (password.isEmpty()) "Password is required" else null
+                if (email.isEmpty() ||  password.isEmpty()) {
+                    Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
             }
         }
 
         btnSignUp.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
 
@@ -45,14 +47,5 @@ class SignInActivity : AppCompatActivity() {
             // Placeholder for forgot password logic
             // Could navigate to a ForgotPasswordActivity if needed
         }
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
     }
 }
