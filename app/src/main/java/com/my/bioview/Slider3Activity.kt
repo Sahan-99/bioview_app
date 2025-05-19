@@ -22,7 +22,7 @@ class Slider3Activity : AppCompatActivity() {
         updateIndicators(indicators, 2)
 
         btnGetStarted.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
             finish()
         }

@@ -12,25 +12,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BioView"
         tools:targetApi="31">
-
+        <activity
+            android:name=".SignInActivity"
+            android:exported="false" />
         <activity
             android:name=".Slider1Activity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Slider2Activity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Slider3Activity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".Slider2Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Slider3Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
