@@ -44,8 +44,8 @@ class SignInActivity : AppCompatActivity() {
         }
 
         btnForgotPassword.setOnClickListener {
-            // Placeholder for forgot password logic
-            // Could navigate to a ForgotPasswordActivity if needed
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
         }
     }
 }
