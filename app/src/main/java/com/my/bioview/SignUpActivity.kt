@@ -38,19 +38,8 @@ class SignUpActivity : AppCompatActivity() {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        // WARNING: This bypasses SSL verification (for testing only)
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
-            override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
-            override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
-        })
-        val sslContext = SSLContext.getInstance("SSL").apply {
-            init(null, trustAllCerts, java.security.SecureRandom())
-        }
         OkHttpClient.Builder()
             .addInterceptor(logging)
-            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
-            .hostnameVerifier { _, _ -> true }
             .build()
     }
 
