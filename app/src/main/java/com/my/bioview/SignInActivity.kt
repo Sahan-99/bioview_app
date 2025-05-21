@@ -1,6 +1,7 @@
 package com.my.bioview
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -119,6 +120,15 @@ class SignInActivity : AppCompatActivity() {
                         val message = json.getString("message")
                         if (response.isSuccessful && status == "success") {
                             val userType = json.getString("type")
+                            val firstName = json.getString("first_name")
+                            // Save login status to SharedPreferences
+                            val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                            with(sharedPref.edit()) {
+                                putBoolean("is_logged_in", true)
+                                putString("user_type", userType)
+                                putString("first_name", firstName)
+                                apply()
+                            }
                             Toast.makeText(
                                 applicationContext,
                                 "$message (Type: $userType)",
@@ -126,6 +136,7 @@ class SignInActivity : AppCompatActivity() {
                             ).show()
                             val intent = Intent(applicationContext, MainActivity::class.java)
                             intent.putExtra("USER_TYPE", userType)
+                            intent.putExtra("FIRST_NAME", firstName)
                             startActivity(intent)
                             finish()
                         } else {

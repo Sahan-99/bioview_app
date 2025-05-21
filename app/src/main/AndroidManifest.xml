@@ -15,6 +15,9 @@
         android:theme="@style/Theme.BioView"
         tools:targetApi="31">
         <activity
+            android:name=".LogoutActivity2"
+            android:exported="false" />
+        <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity

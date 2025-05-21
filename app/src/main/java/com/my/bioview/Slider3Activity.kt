@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.View
 import android.view.KeyEvent
+import android.content.Context
 
 class Slider3Activity : AppCompatActivity() {
 
@@ -22,7 +23,15 @@ class Slider3Activity : AppCompatActivity() {
         updateIndicators(indicators, 2)
 
         btnGetStarted.setOnClickListener {
-            val intent = Intent(this, SignInActivity::class.java)
+            // Check login status using SharedPreferences
+            val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            val isLoggedIn = sharedPref.getBoolean("is_logged_in", false)
+
+            val intent = if (isLoggedIn) {
+                Intent(this, MainActivity::class.java)
+            } else {
+                Intent(this, SignInActivity::class.java)
+            }
             startActivity(intent)
             finish()
         }
