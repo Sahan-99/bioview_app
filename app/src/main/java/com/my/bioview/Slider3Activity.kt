@@ -37,7 +37,15 @@ class Slider3Activity : AppCompatActivity() {
         }
 
         btnSkip.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            // Check login status using SharedPreferences
+            val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            val isLoggedIn = sharedPref.getBoolean("is_logged_in", false)
+
+            val intent = if (isLoggedIn) {
+                Intent(this, MainActivity::class.java)
+            } else {
+                Intent(this, SignInActivity::class.java)
+            }
             startActivity(intent)
             finish()
         }

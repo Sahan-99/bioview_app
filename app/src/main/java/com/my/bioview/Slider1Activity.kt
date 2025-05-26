@@ -22,7 +22,7 @@ class Slider1Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ✅ Check for internet first
+        // Check for internet first
         if (!isInternetAvailable()) {
             startActivity(Intent(this, NoInternetActivity::class.java))
             finish()
@@ -44,7 +44,16 @@ class Slider1Activity : AppCompatActivity() {
         }
 
         btnSkip.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            // Check login status using SharedPreferences
+            val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            val isLoggedIn = sharedPref.getBoolean("is_logged_in", false)
+
+            val intent = if (isLoggedIn) {
+                Intent(this, MainActivity::class.java)
+            } else {
+                Intent(this, SignInActivity::class.java)
+            }
+            startActivity(intent)
             finish()
         }
     }
@@ -90,7 +99,7 @@ class Slider1Activity : AppCompatActivity() {
         Volley.newRequestQueue(this).add(request)
     }
 
-    // ✅ Internet Check Method
+    // Internet Check Method
     private fun isInternetAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
