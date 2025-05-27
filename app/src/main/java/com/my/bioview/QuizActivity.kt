@@ -1,5 +1,6 @@
 package com.my.bioview
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -74,7 +75,7 @@ class QuizActivity : AppCompatActivity() {
         // Set up RecyclerView for quiz list
         rvQuizList = findViewById(R.id.rvQuizList)
         rvQuizList.layoutManager = LinearLayoutManager(this)
-        quizAdapter = QuizAdapter()
+        quizAdapter = QuizAdapter(this)
         rvQuizList.adapter = quizAdapter
 
         // Initial fetch and start auto-refresh
@@ -91,11 +92,10 @@ class QuizActivity : AppCompatActivity() {
         isRefreshing = true
         Log.d("QuizActivity", "Fetching quizzes at ${System.currentTimeMillis()}")
 
-        // Add timestamp to URL to bypass server-side caching
         val url = "https://bioview.sahans.online/app/get_quizzes.php?t=${System.currentTimeMillis()}"
 
         val stringRequest = object : StringRequest(
-            Method.GET, url,
+            Request.Method.GET, url,
             { response ->
                 Log.d("QuizActivity", "Response received: $response")
                 try {
@@ -192,8 +192,8 @@ class QuizDiffCallback(
     }
 }
 
-// Adapter for RecyclerView with DiffUtil
-class QuizAdapter : RecyclerView.Adapter<QuizAdapter.QuizViewHolder>() {
+// Adapter for RecyclerView with DiffUtil and click handling
+class QuizAdapter(private val context: Context) : RecyclerView.Adapter<QuizAdapter.QuizViewHolder>() {
 
     private var quizList: List<Quiz> = emptyList()
 
@@ -209,6 +209,15 @@ class QuizAdapter : RecyclerView.Adapter<QuizAdapter.QuizViewHolder>() {
     override fun onBindViewHolder(holder: QuizViewHolder, position: Int) {
         val quiz = quizList[position]
         holder.tvQuizTitle.text = quiz.title
+
+        // Set click listener for the item
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, StartQuizActivity::class.java).apply {
+                putExtra("quiz_name", quiz.title)
+                putExtra("quiz_description", "Start this quiz to test your knowledge")
+            }
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = quizList.size
