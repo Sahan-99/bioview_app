@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         helloTextView.text = "Hello $firstName!"
 
         btnNext.setOnClickListener {
-            val intent = Intent(this, LogoutActivity2::class.java)
+            val intent = Intent(this, QuizActivity::class.java)
             startActivity(intent)
             finish()
         }

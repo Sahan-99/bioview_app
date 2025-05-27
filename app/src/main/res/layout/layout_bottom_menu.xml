@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomMenu"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#F5F5F5"
+    android:paddingVertical="1dp"
+    android:gravity="center">
+
+    <!-- Home Icon and Label -->
+    <LinearLayout
+        android:id="@+id/itemHome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/iconHome"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_home"
+            android:contentDescription="Home"
+            />
+    </LinearLayout>
+
+    <!-- 3D Icon and Label (Active) -->
+    <LinearLayout
+        android:id="@+id/item3D"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/icon3D"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_3d"
+            android:contentDescription="3D"
+            android:background="@drawable/circle_blue_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- Profile Icon and Label -->
+    <LinearLayout
+        android:id="@+id/itemProfile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/iconProfile"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_user"
+            android:contentDescription="Profile"
+            />
+    </LinearLayout>
+
+
+
+</LinearLayout>
