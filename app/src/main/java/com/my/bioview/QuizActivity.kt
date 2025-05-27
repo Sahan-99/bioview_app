@@ -30,7 +30,7 @@ class QuizActivity : AppCompatActivity() {
 
     private lateinit var rvQuizList: RecyclerView
     private val handler = Handler(Looper.getMainLooper())
-    private val refreshInterval = 10000L // 10 seconds in milliseconds
+    private val refreshInterval = 10000L
     private var isRefreshing = false
     private var quizAdapter: QuizAdapter? = null
 
@@ -39,21 +39,18 @@ class QuizActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_quiz)
 
-        // Handle window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Back button click listener
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
-        // Bottom menu click listeners
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
         val item3D = findViewById<LinearLayout>(R.id.item3D)
         val itemProfile = findViewById<LinearLayout>(R.id.itemProfile)
@@ -64,7 +61,7 @@ class QuizActivity : AppCompatActivity() {
         }
 
         item3D.setOnClickListener {
-            // Already on 3D screen (no action needed or highlight toggle)
+            // Already on 3D screen
         }
 
         itemProfile.setOnClickListener {
@@ -72,13 +69,11 @@ class QuizActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Set up RecyclerView for quiz list
         rvQuizList = findViewById(R.id.rvQuizList)
         rvQuizList.layoutManager = LinearLayoutManager(this)
         quizAdapter = QuizAdapter(this)
         rvQuizList.adapter = quizAdapter
 
-        // Initial fetch and start auto-refresh
         fetchQuizzes()
         startAutoRefresh()
     }
@@ -105,11 +100,11 @@ class QuizActivity : AppCompatActivity() {
                         val quizzes = mutableListOf<Quiz>()
                         for (i in 0 until quizList.length()) {
                             val quizObj = quizList.getJSONObject(i)
-                            quizzes.add(Quiz(
-                                quizObj.getInt("quiz_id"),
-                                quizObj.getInt("model_id"),
-                                quizObj.getString("title")
-                            ))
+                            val quizId = quizObj.getInt("quiz_id")
+                            val modelId = quizObj.getInt("model_id")
+                            val title = quizObj.getString("title")
+                            quizzes.add(Quiz(quizId, modelId, title))
+                            Log.d("QuizActivity", "Parsed quiz: quizId=$quizId, title=$title")
                         }
                         Log.d("QuizActivity", "Parsed quizzes: $quizzes")
                         quizAdapter?.updateQuizzes(quizzes)
@@ -150,18 +145,18 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacksAndMessages(null) // Stop auto-refresh when paused
+        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onResume() {
         super.onResume()
-        startAutoRefresh() // Restart auto-refresh when resumed
+        startAutoRefresh()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null) // Clean up handler
-        Volley.newRequestQueue(this).cancelAll("QUIZ_REQUEST") // Cancel Volley requests
+        handler.removeCallbacksAndMessages(null)
+        Volley.newRequestQueue(this).cancelAll("QUIZ_REQUEST")
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -174,10 +169,8 @@ class QuizActivity : AppCompatActivity() {
     }
 }
 
-// Data class for Quiz
 data class Quiz(val quizId: Int, val modelId: Int, val title: String)
 
-// DiffUtil Callback for Quiz items
 class QuizDiffCallback(
     private val oldList: List<Quiz>,
     private val newList: List<Quiz>
@@ -192,7 +185,6 @@ class QuizDiffCallback(
     }
 }
 
-// Adapter for RecyclerView with DiffUtil and click handling
 class QuizAdapter(private val context: Context) : RecyclerView.Adapter<QuizAdapter.QuizViewHolder>() {
 
     private var quizList: List<Quiz> = emptyList()
@@ -210,10 +202,11 @@ class QuizAdapter(private val context: Context) : RecyclerView.Adapter<QuizAdapt
         val quiz = quizList[position]
         holder.tvQuizTitle.text = quiz.title
 
-        // Set click listener for the item
         holder.itemView.setOnClickListener {
+            Log.d("QuizAdapter", "Clicked quiz: title=${quiz.title}, quizId=${quiz.quizId}")
             val intent = Intent(context, StartQuizActivity::class.java).apply {
                 putExtra("quiz_name", quiz.title)
+                putExtra("quiz_id", quiz.quizId)
                 putExtra("quiz_description", "Start this quiz to test your knowledge")
             }
             context.startActivity(intent)
