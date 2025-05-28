@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/bg_vector">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -15,29 +15,27 @@
         android:paddingBottom="32dp">
 
         <ImageView
-            android:id="@+id/bg_vector"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/bg_vector"
-            android:contentDescription="Quiz Badge"
+            android:layout_width="310dp"
+            android:layout_height="100dp"
+            android:src="@drawable/white_card"
             android:scaleType="centerInside"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/card_body"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            android:layout_marginTop="-75dp" />
 
         <!-- Top Image View (Badge-like) -->
         <ImageView
             android:id="@+id/ivQuizBadge"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_quiz_badge"
             android:contentDescription="Quiz Badge"
             android:scaleType="centerInside"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="40dp" />
 
         <!-- White Card Background for Body Content -->
         <androidx.cardview.widget.CardView
@@ -52,7 +50,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="15dp">
 
 
 
@@ -72,7 +70,7 @@
                     android:textStyle="bold"
                     android:textColor="#fff"
                     android:gravity="center"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="0dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -83,37 +81,43 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Take this quiz to check what you already know and learn something new. It's a great way to improve your understanding while having fun."
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="#616161"
                     android:gravity="center"
                     android:lineSpacingExtra="8dp"
                     app:layout_constraintTop_toBottomOf="@id/tvQuizName"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="30dp"/>
+                    android:layout_marginTop="50dp"/>
 
                 <!-- Start Quiz Button -->
                 <Button
                     android:id="@+id/btnStartQuiz"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Start Quiz"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="@color/green"
-                    android:padding="12dp"
+                    android:padding="8dp"
                     app:layout_constraintTop_toBottomOf="@id/tvQuizDescription"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="70dp"
                     android:layout_marginBottom="50dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-
+        <ImageView
+            android:layout_width="310dp"
+            android:layout_height="45dp"
+            android:src="@drawable/white_card"
+            android:scaleType="centerInside"
+            app:layout_constraintTop_toBottomOf="@id/card_body"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="-20dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -280,7 +280,7 @@ class AnswerAdapter(
 
         // Highlight selected answer
         if (answer.answerId == selectedAnswerId) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_light))
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_orange_light))
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
         }
