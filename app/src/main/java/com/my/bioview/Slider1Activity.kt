@@ -13,6 +13,8 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -30,6 +32,9 @@ class Slider1Activity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_slider1)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         val btnNext = findViewById<Button>(R.id.btnNext1)
         val btnSkip = findViewById<TextView>(R.id.btnSkip1)

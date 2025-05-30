@@ -8,12 +8,17 @@ import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import android.view.KeyEvent
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         val btnSendResetLink = findViewById<Button>(R.id.btnSendResetLink)
         val btnSignIn = findViewById<TextView>(R.id.btnSignIn)

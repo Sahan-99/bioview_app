@@ -9,12 +9,17 @@ import android.widget.TextView
 import android.view.View
 import android.view.KeyEvent
 import android.content.Context
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class Slider3Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slider3)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         val btnGetStarted = findViewById<Button>(R.id.btnGetStarted3)
         val btnSkip = findViewById<TextView>(R.id.btnSkip3)

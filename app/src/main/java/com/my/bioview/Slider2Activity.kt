@@ -9,12 +9,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.View
 import android.view.KeyEvent
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class Slider2Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slider2)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         val btnNext = findViewById<Button>(R.id.btnNext2)
         val btnSkip = findViewById<TextView>(R.id.btnSkip2)
