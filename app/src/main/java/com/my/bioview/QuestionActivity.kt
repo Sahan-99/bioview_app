@@ -291,7 +291,7 @@ class AnswerAdapter(
             if (isSelected)
                 ContextCompat.getColor(context, R.color.primary_blue)
             else
-                ContextCompat.getColor(context, android.R.color.white)
+                ContextCompat.getColor(context, R.color.light_gray)
         )
 
 // Update Answer Text Color

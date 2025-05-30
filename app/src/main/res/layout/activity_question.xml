@@ -79,9 +79,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rvAnswers"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="30dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="10dp">
@@ -91,10 +92,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Previous"
-                        android:background="@drawable/btn_rounded"
+                        android:background="@drawable/btn_rounded_stroke"
                         app:backgroundTint="@null"
                         app:strokeColor="@null"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#000"
                         android:textSize="14sp"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp" />
@@ -107,7 +108,7 @@
                         android:background="@drawable/btn_rounded"
                         app:backgroundTint="@null"
                         app:strokeColor="@null"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#fff"
                         android:textSize="14sp"
                         android:layout_weight="1"
                         android:layout_marginStart="10dp" />

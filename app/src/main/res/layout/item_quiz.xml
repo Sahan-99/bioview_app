@@ -22,13 +22,14 @@
             android:layout_weight="1"
             android:text="Quiz Title"
             android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:gravity="center_vertical" />
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@drawable/ic_arrow_right"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_ar_fill"
             android:contentDescription="Next"
              />
 
