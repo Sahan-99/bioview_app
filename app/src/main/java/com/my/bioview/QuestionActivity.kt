@@ -21,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class QuestionActivity : AppCompatActivity() {
 
@@ -38,6 +39,9 @@ class QuestionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         // Retrieve quizId inside onCreate
         quizId = intent?.getIntExtra("quiz_id", -1) ?: -1
@@ -259,11 +263,13 @@ class AnswerAdapter(
     private var selectedAnswerId: Int? = null
 
     class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvAnswer: TextView = itemView.findViewById(android.R.id.text1)
+        val tvOptionLetter: TextView = itemView.findViewById(R.id.tvOptionLetter)
+        val tvAnswerText: TextView = itemView.findViewById(R.id.tvAnswerText)
+        val cardView: androidx.cardview.widget.CardView = itemView.findViewById(R.id.cardView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.answer_item, parent, false)
         return AnswerViewHolder(view)
     }
 
@@ -276,18 +282,43 @@ class AnswerAdapter(
             3 -> "D"
             else -> ""
         }
-        holder.tvAnswer.text = "$label. ${answer.answerText}"
+        holder.tvOptionLetter.text = label
+        holder.tvAnswerText.text = answer.answerText
 
-        // Highlight selected answer
-        if (answer.answerId == selectedAnswerId) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_orange_light))
-        } else {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
-        }
+        val isSelected = answer.answerId == selectedAnswerId
+// Update Card Background
+        holder.cardView.setCardBackgroundColor(
+            if (isSelected)
+                ContextCompat.getColor(context, R.color.primary_blue)
+            else
+                ContextCompat.getColor(context, android.R.color.white)
+        )
+
+// Update Answer Text Color
+        holder.tvAnswerText.setTextColor(
+            if (isSelected)
+                ContextCompat.getColor(context, android.R.color.white)
+            else
+                ContextCompat.getColor(context, android.R.color.black)
+        )
+
+// Update Option Letter Text Color and Background
+        holder.tvOptionLetter.setTextColor(
+            if (isSelected)
+                ContextCompat.getColor(context, R.color.primary_blue)
+            else
+                ContextCompat.getColor(context, R.color.white)
+        )
+
+        holder.tvOptionLetter.background = if (isSelected)
+            ContextCompat.getDrawable(context, R.drawable.indicator_unselectedw)
+        else
+            ContextCompat.getDrawable(context, R.drawable.indicator_selected)
 
         holder.itemView.setOnClickListener {
             selectedAnswerId = answer.answerId
             onAnswerSelected(answer.answerId)
+            notifyDataSetChanged()
         }
     }
 
