@@ -20,9 +20,6 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.io.IOException
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class SignInActivity : AppCompatActivity() {
 
@@ -53,6 +50,14 @@ class SignInActivity : AppCompatActivity() {
         btnSignIn = findViewById(R.id.btnSignIn)
         btnSignUp = findViewById(R.id.btnSignUp)
         btnForgotPassword = findViewById(R.id.btnForgotPassword)
+
+        // Check if user is already logged in
+        val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        if (sharedPref.getBoolean("is_logged_in", false)) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
 
         btnSignIn.setOnClickListener {
             loginUser()
@@ -114,13 +119,23 @@ class SignInActivity : AppCompatActivity() {
                         val message = json.getString("message")
                         if (response.isSuccessful && status == "success") {
                             val userType = json.getString("type")
-                            val firstName = json.getString("first_name")
-                            // Save login status to SharedPreferences
+                            // Extract session cookie (PHPSESSID)
+                            val cookies = response.headers("Set-Cookie")
+                            var sessionId: String? = null
+                            for (cookie in cookies) {
+                                if (cookie.contains("PHPSESSID")) {
+                                    sessionId = cookie.split(";")[0] // e.g., PHPSESSID=abc123
+                                    break
+                                }
+                            }
+                            // Save login status and session ID to SharedPreferences
                             val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                             with(sharedPref.edit()) {
                                 putBoolean("is_logged_in", true)
                                 putString("user_type", userType)
-                                putString("first_name", firstName)
+                                if (sessionId != null) {
+                                    putString("session_id", sessionId)
+                                }
                                 apply()
                             }
                             Toast.makeText(
@@ -130,7 +145,6 @@ class SignInActivity : AppCompatActivity() {
                             ).show()
                             val intent = Intent(applicationContext, MainActivity::class.java)
                             intent.putExtra("USER_TYPE", userType)
-                            intent.putExtra("FIRST_NAME", firstName)
                             startActivity(intent)
                             finish()
                         } else {
