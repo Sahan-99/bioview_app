@@ -1,25 +1,26 @@
 package com.my.bioview
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvGreeting: TextView
     private lateinit var ivProfile: ImageView
     private lateinit var btnQuiz: Button
-    private lateinit var progressBar: ProgressBar
+    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         tvGreeting = findViewById(R.id.tvGreeting)
         ivProfile = findViewById(R.id.ivProfile)
         btnQuiz = findViewById(R.id.btnQuiz)
-        progressBar = findViewById(R.id.progressBar)
 
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
         val item3D = findViewById<LinearLayout>(R.id.item3D)
@@ -93,6 +93,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Initialize ProgressDialog
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Loading user data...")
+        progressDialog.setCancelable(false) // Prevent user from dismissing it
+
         // Fetch user data
         fetchUserData()
 
@@ -111,18 +116,22 @@ class MainActivity : AppCompatActivity() {
     private fun fetchUserData() {
         val url = "https://bioview.sahans.online/app/get_user.php"
 
-        // Show ProgressBar
-        progressBar.visibility = View.VISIBLE
+        // Show ProgressDialog
+        progressDialog.show()
 
         // Get session ID from SharedPreferences
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null)
 
+        val startTime = System.currentTimeMillis()
         val stringRequest = object : StringRequest(
             Method.GET, url,
             { response ->
-                // Hide ProgressBar
-                progressBar.visibility = View.GONE
+                val endTime = System.currentTimeMillis()
+                Log.d("MainActivity", "Fetch time: ${endTime - startTime} ms")
+
+                // Hide ProgressDialog
+                progressDialog.dismiss()
 
                 try {
                     val jsonResponse = JSONObject(response)
@@ -134,8 +143,10 @@ class MainActivity : AppCompatActivity() {
                         if (profilePicture.isNotEmpty()) {
                             Glide.with(this)
                                 .load(profilePicture)
-                                .placeholder(R.drawable.default_profile) // Shown while loading
-                                .error(R.drawable.default_profile) // Shown if load fails
+                                .override(100, 100) // Resize to match ImageView (50dp ~ 100px)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL) // Enable disk caching
+                                .placeholder(R.drawable.default_profile)
+                                .error(R.drawable.default_profile)
                                 .listener(object : RequestListener<android.graphics.drawable.Drawable> {
                                     override fun onLoadFailed(
                                         e: GlideException?,
@@ -184,10 +195,11 @@ class MainActivity : AppCompatActivity() {
                 }
             },
             { error ->
-                // Hide ProgressBar on error
-                progressBar.visibility = View.GONE
+                // Hide ProgressDialog on error
+                progressDialog.dismiss()
 
-                Log.e("MainActivity", "Network error: ${error.message}")
+                val endTime = System.currentTimeMillis()
+                Log.e("MainActivity", "Fetch error time: ${endTime - startTime} ms, ${error.message}")
                 Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
                 tvGreeting.text = "Hello, User!"
                 ivProfile.setImageResource(R.drawable.default_profile)
@@ -202,6 +214,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            5000, // Initial timeout in milliseconds
+            1,    // Max retries
+            1.0f  // Backoff multiplier
+        )
         Volley.newRequestQueue(this).add(stringRequest)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Ensure ProgressDialog is dismissed if activity is destroyed
+        if (::progressDialog.isInitialized && progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
     }
 }
