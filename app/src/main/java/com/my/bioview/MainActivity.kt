@@ -67,12 +67,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         val features = listOf(
-            Pair(R.id.feature1, Pair("AR MODEL\nVISUALIZATION", R.drawable.ic_user)),
-            Pair(R.id.feature2, Pair("INTERACTIVE\n3D MODELS", R.drawable.ic_3d)),
-            Pair(R.id.feature3, Pair("VOICE\nEXPLORATIONS", R.drawable.ic_home)),
-            Pair(R.id.feature4, Pair("QUIZZES &\nCHALLENGES", R.drawable.ic_user)),
-            Pair(R.id.feature5, Pair("LEARNING\nREPORT", R.drawable.ic_home)),
-            Pair(R.id.feature6, Pair("USER-FRIENDLY\nINTERFACE", R.drawable.ic_3d))
+            Pair(R.id.feature1, Pair("AR Model\nVisualization", R.drawable.ic_ar)),
+            Pair(R.id.feature2, Pair("Interactive\n3D Models", R.drawable.ic_3d_model)),
+            Pair(R.id.feature3, Pair("Voice\nExplanations", R.drawable.ic_voice)),
+            Pair(R.id.feature4, Pair("Quizzes &\nChallenges", R.drawable.ic_quiz)),
+            Pair(R.id.feature5, Pair("Learning\nReport", R.drawable.ic_report)),
+            Pair(R.id.feature6, Pair("User-Friendly\nInterface", R.drawable.ic_ui))
         )
 
         // Set icons and names for each feature

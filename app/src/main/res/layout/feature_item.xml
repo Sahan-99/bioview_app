@@ -11,11 +11,12 @@
     <ImageView
         android:id="@+id/feature_icon"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_home"
         android:background="@drawable/white_box_background"
-        android:padding="5dp" />
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"/>
 
     <TextView
         android:id="@+id/feature_name"
@@ -27,5 +28,6 @@
         android:textColor="#FFFFFF"
         android:gravity="center"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:textStyle="bold" />
 </LinearLayout>
