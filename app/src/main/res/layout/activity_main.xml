@@ -80,14 +80,15 @@
                     android:id="@+id/etSearch"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Search"
+                    android:hint="Search..."
+                    android:textSize="16sp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_edittext_rounded"
                     android:textColorHint="#757575"
                     android:textColor="#212121"
                     android:drawableStart="@android:drawable/ic_menu_search"
-                    android:drawablePadding="8dp"
+                    android:drawablePadding="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="25dp" />
             </LinearLayout>
