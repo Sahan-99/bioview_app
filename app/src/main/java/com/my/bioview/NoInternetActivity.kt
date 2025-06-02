@@ -9,11 +9,16 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class NoInternetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_no_internet)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         val btnExitApp = findViewById<Button>(R.id.btnExitApp)
         val btnTryAgain = findViewById<Button>(R.id.btnTryAgain)

@@ -52,7 +52,7 @@
                             android:layout_height="wrap_content"
                             android:text="Hello, User!"
                             android:textSize="24sp"
-                            android:textStyle="bold"
+                            android:textFontWeight="700"
                             android:textColor="#FFFFFF" />
 
                         <TextView
