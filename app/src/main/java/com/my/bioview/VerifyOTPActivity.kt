@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import okhttp3.Call
 import okhttp3.Callback
@@ -42,14 +43,30 @@ class VerifyOTPActivity : AppCompatActivity() {
 
         val btnVerifyOTP = findViewById<Button>(R.id.btnVerifyOTP)
         val btnSignIn = findViewById<TextView>(R.id.btnSignIn)
-        val editTextOTP = findViewById<TextInputEditText>(R.id.editTextOTP)
+        val otp1 = findViewById<TextInputEditText>(R.id.editTextOTP1)
+        val otp2 = findViewById<TextInputEditText>(R.id.editTextOTP2)
+        val otp3 = findViewById<TextInputEditText>(R.id.editTextOTP3)
+        val otp4 = findViewById<TextInputEditText>(R.id.editTextOTP4)
+        val otp5 = findViewById<TextInputEditText>(R.id.editTextOTP5)
+        val otp6 = findViewById<TextInputEditText>(R.id.editTextOTP6)
+
+        // Move focus between OTP fields
+        val otpFields = listOf(otp1, otp2, otp3, otp4, otp5, otp6)
+        otpFields.forEachIndexed { index, editText ->
+            editText.doAfterTextChanged { editable ->
+                if (editable?.length == 1 && index < 5) {
+                    otpFields[index + 1].requestFocus()
+                }
+                if (editable?.isEmpty() == true && index > 0) {
+                    otpFields[index - 1].requestFocus()
+                }
+            }
+        }
 
         btnVerifyOTP.setOnClickListener {
-            val otp = editTextOTP.text.toString().trim()
-            if (otp.isEmpty()) {
-                Toast.makeText(this, "OTP is required", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            val otp = listOf(otp1, otp2, otp3, otp4, otp5, otp6)
+                .map { it.text.toString().trim() }
+                .joinToString("")
             if (otp.length != 6 || !otp.all { it.isDigit() }) {
                 Toast.makeText(this, "Please enter a valid 6-digit OTP", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
