@@ -1,123 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:padding="20dp"
-    tools:context=".Slider1Activity">
+    android:fillViewport="true">
 
-    <!-- Skip Text -->
-    <TextView
-        android:id="@+id/btnSkip1"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Skip"
-        android:textColor="#1E90FF"
-        android:textSize="14sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp" />
+        android:background="#FFFFFF"
+        android:padding="20dp"
+        tools:context=".Slider1Activity">
 
-    <!-- Illustration -->
-    <ImageView
-        android:id="@+id/Illustration"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/slider1"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        app:layout_constraintWidth_percent="1.2"
-        app:layout_constraintDimensionRatio="4:3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSkip1"
-        android:contentDescription="Slider Illustration" />
+        <!-- Skip Text -->
+        <TextView
+            android:id="@+id/btnSkip1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Skip"
+            android:textColor="#1E90FF"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp" />
 
-    <!-- Navigation Indicators -->
-    <LinearLayout
-        android:id="@+id/indicators"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/Illustration"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        <!-- Illustration -->
+        <ImageView
+            android:id="@+id/Illustration"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/slider1"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:layout_constraintWidth_percent="1.2"
+            app:layout_constraintDimensionRatio="4:3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSkip1"
+            android:contentDescription="Slider Illustration" />
 
-        <View
-            android:id="@+id/dot1"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:background="@drawable/indicator_selected" />
+        <!-- Navigation Indicators -->
+        <LinearLayout
+            android:id="@+id/indicators"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/Illustration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <View
-            android:id="@+id/dot2"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/indicator_unselected" />
+            <View
+                android:id="@+id/dot1"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/indicator_selected" />
 
-        <View
-            android:id="@+id/dot3"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/indicator_unselected" />
-    </LinearLayout>
+            <View
+                android:id="@+id/dot2"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/indicator_unselected" />
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Welcome to BioView – Learn Biology with AR!"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:gravity="center"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintTop_toBottomOf="@id/indicators"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+            <View
+                android:id="@+id/dot3"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/indicator_unselected" />
+        </LinearLayout>
 
-    <!-- Subtitle -->
-    <TextView
-        android:id="@+id/Subtitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Discover biology with AR! Explore 3D models, visualize concepts, and enhance your learning"
-        android:textSize="16sp"
-        android:textColor="#757575"
-        android:gravity="center"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintTop_toBottomOf="@id/Title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        <!-- Title -->
+        <TextView
+            android:id="@+id/Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Welcome to BioView – Learn Biology with AR!"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/indicators"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp" />
 
-    <!-- Next Button -->
-    <Button
-        android:id="@+id/btnNext1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:background="@drawable/btn_rounded"
-        app:backgroundTint="@null"
-        app:strokeColor="@null"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="30dp" />
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/Subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Discover biology with AR! Explore 3D models, visualize concepts, and enhance your learning"
+            android:textSize="16sp"
+            android:textColor="#757575"
+            android:gravity="center"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/Title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Next Button -->
+        <Button
+            android:id="@+id/btnNext1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:background="@drawable/btn_rounded"
+            app:backgroundTint="@null"
+            app:strokeColor="@null"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:layout_marginTop="40dp"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="30dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
