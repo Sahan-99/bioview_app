@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:text="User"
-                android:textStyle="bold"
+                android:textFontWeight="500"
                 android:textColor="#000000"
                 app:layout_constraintTop_toBottomOf="@id/profileImage"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,101 +90,240 @@
                 android:layout_marginTop="16dp" />
 
             <!-- Edit Profile Button -->
-            <Button
-                android:id="@+id/btnEditProfile"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEditProfile"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Edit Profile"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/profileName"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="20dp" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <!-- User Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_user"
+                        app:tint="#000000"/>
+
+                    <!-- Text -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Edit Profile"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingStart="20dp" />
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_next"
+                        app:tint="#000000" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
 
             <!-- Change Password Button -->
-            <Button
-                android:id="@+id/btnChangePassword"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardChangePassword"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Change Password"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnEditProfile"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/cardEditProfile"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Favorites Modules Button -->
-            <Button
-                android:id="@+id/btnFavoritesModules"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Favorites Modules"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnChangePassword"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <!-- User Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lock"
+                        app:tint="#000000"/>
+
+                    <!-- Text -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Change Password"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingStart="20dp" />
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_next"
+                        app:tint="#000000" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Help & Support Button -->
-            <Button
-                android:id="@+id/btnHelpSupport"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHelpSupport"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Help and Support"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnFavoritesModules"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/cardChangePassword"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <!-- User Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_help"
+                        app:tint="#000000"/>
+
+                    <!-- Text -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Help and Support"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingStart="20dp" />
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_next"
+                        app:tint="#000000" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- About Us Button -->
-            <Button
-                android:id="@+id/btnAboutUs"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAboutUs"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="About Us"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnHelpSupport"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/cardHelpSupport"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <!-- User Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_info"
+                        app:tint="#000000"/>
+
+                    <!-- Text -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="About Us"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingStart="20dp" />
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_next"
+                        app:tint="#000000" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Log Out Button -->
-            <Button
-                android:id="@+id/btnLogOut"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLogOut"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Log Out"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnAboutUs"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/cardAboutUs"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <!-- User Icon -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_logout"
+                        app:tint="#000000"/>
+
+                    <!-- Text -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Log Out"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingStart="20dp" />
+
+                    <!-- Arrow Icon -->
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_next"
+                        app:tint="#000000" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

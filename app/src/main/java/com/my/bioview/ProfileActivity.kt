@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -58,7 +59,6 @@ class ProfileActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageView>(R.id.btnBack)
         btnBack.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
@@ -100,12 +100,11 @@ class ProfileActivity : AppCompatActivity() {
         fetchUserData()
 
         // Button click listeners
-        val btnEditProfile = findViewById<Button>(R.id.btnEditProfile)
-        val btnChangePassword = findViewById<Button>(R.id.btnChangePassword)
-        val btnFavoritesModules = findViewById<Button>(R.id.btnFavoritesModules)
-        val btnHelpSupport = findViewById<Button>(R.id.btnHelpSupport)
-        val btnAboutUs = findViewById<Button>(R.id.btnAboutUs)
-        val btnLogOut = findViewById<Button>(R.id.btnLogOut)
+        val btnEditProfile = findViewById<CardView>(R.id.cardEditProfile)
+        val btnChangePassword = findViewById<CardView>(R.id.cardChangePassword)
+        val btnHelpSupport = findViewById<CardView>(R.id.cardHelpSupport)
+        val btnAboutUs = findViewById<CardView>(R.id.cardAboutUs)
+        val btnLogOut = findViewById<CardView>(R.id.cardLogOut)
 
         btnEditProfile.setOnClickListener {
             Toast.makeText(this, "Edit Profile clicked", Toast.LENGTH_SHORT).show()
@@ -117,12 +116,6 @@ class ProfileActivity : AppCompatActivity() {
             Toast.makeText(this, "Change Password clicked", Toast.LENGTH_SHORT).show()
             // Add intent to ChangePasswordActivity
             // startActivity(Intent(this, ChangePasswordActivity::class.java))
-        }
-
-        btnFavoritesModules.setOnClickListener {
-            Toast.makeText(this, "Favorites Modules clicked", Toast.LENGTH_SHORT).show()
-            // Add intent to FavoritesModulesActivity
-            // startActivity(Intent(this, FavoritesModulesActivity::class.java))
         }
 
         btnHelpSupport.setOnClickListener {
