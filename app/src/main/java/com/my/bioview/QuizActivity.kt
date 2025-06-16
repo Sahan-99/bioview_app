@@ -70,7 +70,7 @@ class QuizActivity : AppCompatActivity() {
         }
 
         itemProfile.setOnClickListener {
-            val intent = Intent(this, LogoutActivity2::class.java)
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
