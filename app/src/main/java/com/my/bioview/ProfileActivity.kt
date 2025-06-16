@@ -125,9 +125,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnAboutUs.setOnClickListener {
-            Toast.makeText(this, "About Us clicked", Toast.LENGTH_SHORT).show()
-            // Add intent to AboutUsActivity
-            // startActivity(Intent(this, AboutUsActivity::class.java))
+            startActivity(Intent(this, AboutUsActivity::class.java))
         }
 
         btnLogOut.setOnClickListener {
