@@ -241,7 +241,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Help and Support"
+                        android:text="Help &amp; Support"
                         android:textSize="16sp"
                         android:textColor="#000000"
                         android:paddingStart="20dp" />

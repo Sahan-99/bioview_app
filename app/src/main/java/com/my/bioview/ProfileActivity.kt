@@ -119,9 +119,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnHelpSupport.setOnClickListener {
-            Toast.makeText(this, "Help & Support clicked", Toast.LENGTH_SHORT).show()
-            // Add intent to HelpSupportActivity
-            // startActivity(Intent(this, HelpSupportActivity::class.java))
+            startActivity(Intent(this, HelpAndSupportActivity::class.java))
         }
 
         btnAboutUs.setOnClickListener {
