@@ -15,8 +15,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.android.volley.AuthFailureError
 import com.android.volley.DefaultRetryPolicy
+import com.android.volley.NetworkResponse
 import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
@@ -25,9 +29,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import org.json.JSONObject
+import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.HashMap
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -271,12 +279,23 @@ class EditProfileActivity : AppCompatActivity() {
             }
         }
 
-        val stringRequest = object : StringRequest(
-            Request.Method.POST, url,
-            { response ->
+        // Validate file size (2MB limit as per server)
+        if (file.exists() && file.length() > 2 * 1024 * 1024) {
+            progressDialog.dismiss()
+            Toast.makeText(this, "File size exceeds 2MB limit", Toast.LENGTH_SHORT).show()
+            file.delete()
+            return
+        }
+
+        val volleyMultipartRequest = object : VolleyMultipartRequest(
+            Method.POST,
+            url,
+            Response.Listener { response ->
                 progressDialog.dismiss()
                 try {
-                    val jsonResponse = JSONObject(response)
+                    val responseString = String(response, Charsets.UTF_8)
+                    Log.d("EditProfileActivity", "Raw Response: $responseString")
+                    val jsonResponse = JSONObject(responseString)
                     if (jsonResponse.getString("status") == "success") {
                         Toast.makeText(this, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
                         fetchUserData() // Refresh profile picture
@@ -284,17 +303,18 @@ class EditProfileActivity : AppCompatActivity() {
                         Toast.makeText(this, "Image upload failed: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Log.e("EditProfileActivity", "Error parsing upload response: ${e.message}")
-                    Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show()
+                    Log.e("EditProfileActivity", "Error parsing upload response: ${e.message}, Data: ${String(response, Charsets.UTF_8)}")
+                    Toast.makeText(this, "Error uploading image: Invalid response format", Toast.LENGTH_SHORT).show()
                 }
             },
-            { error ->
+            Response.ErrorListener { error ->
                 progressDialog.dismiss()
                 Log.e("EditProfileActivity", "Upload error: ${error.message}")
-                Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         ) {
-            override fun getHeaders(): MutableMap<String, String> {
+            @Throws(AuthFailureError::class)
+            override fun getHeaders(): Map<String, String> {
                 val headers = HashMap<String, String>()
                 if (sessionId != null) {
                     headers["Cookie"] = sessionId
@@ -302,16 +322,92 @@ class EditProfileActivity : AppCompatActivity() {
                 return headers
             }
 
-            override fun getParams(): MutableMap<String, String> {
-                val params = HashMap<String, String>()
-                params["image"] = FileInputStream(file).readBytes().toString() // Simplified for example, use Multipart for real implementation
+            @Throws(AuthFailureError::class)
+            override fun getByteData(): Map<String, File> {
+                val params = HashMap<String, File>()
+                params["image"] = file // Key "image" must match $_FILES['image'] on server
                 return params
             }
         }
 
-        stringRequest.retryPolicy = DefaultRetryPolicy(5000, 1, 1.0f)
-        Volley.newRequestQueue(this).add(stringRequest)
+        volleyMultipartRequest.retryPolicy = DefaultRetryPolicy(5000, 1, 1.0f)
+        Volley.newRequestQueue(this).add(volleyMultipartRequest)
         file.delete() // Clean up temporary file
+    }
+
+    // Custom VolleyMultipartRequest class
+    open class VolleyMultipartRequest(
+        method: Int,
+        url: String,
+        listener: Response.Listener<ByteArray>,
+        errorListener: Response.ErrorListener
+    ) : Request<ByteArray>(method, url, errorListener) {
+
+        private val mListener: Response.Listener<ByteArray> = listener
+
+        @Throws(AuthFailureError::class)
+        override fun getHeaders(): Map<String, String> {
+            return HashMap()
+        }
+
+        @Throws(AuthFailureError::class)
+        open fun getByteData(): Map<String, File> {
+            return HashMap()
+        }
+
+        override fun deliverResponse(response: ByteArray) {
+            mListener.onResponse(response)
+        }
+
+        override fun parseNetworkResponse(response: NetworkResponse): Response<ByteArray> {
+            return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response))
+        }
+
+        @Throws(AuthFailureError::class)
+        override fun getBodyContentType(): String {
+            return "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
+        }
+
+        @Throws(AuthFailureError::class)
+        override fun getBody(): ByteArray {
+            val byteArrayOutputStream = java.io.ByteArrayOutputStream()
+            val dataOutputStream = DataOutputStream(byteArrayOutputStream)
+
+            try {
+                val params = getByteData()
+                val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
+
+                for ((key, file) in params) {
+                    dataOutputStream.writeBytes("--$boundary\r\n")
+                    dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"$key\"; filename=\"${file.name}\"\r\n")
+                    dataOutputStream.writeBytes("Content-Type: ${getContentType(file)}\r\n\r\n") // Dynamic content type
+
+                    val fileInputStream = FileInputStream(file)
+                    val buffer = ByteArray(1024)
+                    var bytesRead: Int
+                    while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
+                        dataOutputStream.write(buffer, 0, bytesRead)
+                    }
+                    fileInputStream.close()
+                    dataOutputStream.writeBytes("\r\n")
+                }
+
+                dataOutputStream.writeBytes("--$boundary--\r\n")
+                dataOutputStream.flush()
+            } catch (e: Exception) {
+                Log.e("VolleyMultipartRequest", "Error building multipart body: ${e.message}")
+            }
+
+            return byteArrayOutputStream.toByteArray()
+        }
+
+        private fun getContentType(file: File): String {
+            return when (file.extension.toLowerCase()) {
+                "jpg", "jpeg" -> "image/jpeg"
+                "png" -> "image/png"
+                else -> "application/octet-stream"
+            }
+        }
     }
 
     override fun onDestroy() {
