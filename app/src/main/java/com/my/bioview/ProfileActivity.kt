@@ -107,9 +107,7 @@ class ProfileActivity : AppCompatActivity() {
         val btnLogOut = findViewById<CardView>(R.id.cardLogOut)
 
         btnEditProfile.setOnClickListener {
-            Toast.makeText(this, "Edit Profile clicked", Toast.LENGTH_SHORT).show()
-            // Add intent to EditProfileActivity
-            // startActivity(Intent(this, EditProfileActivity::class.java))
+            startActivity(Intent(this, EditProfileActivity::class.java))
         }
 
         btnChangePassword.setOnClickListener {
