@@ -99,6 +99,7 @@ class EditProfileActivity : AppCompatActivity() {
         // Check login state
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         if (!sharedPref.getBoolean("is_logged_in", false)) {
+            Log.w("EditProfileActivity", "User not logged in, redirecting to SignInActivity")
             startActivity(Intent(this, SignInActivity::class.java))
             finish()
             return
@@ -133,11 +134,20 @@ class EditProfileActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null)
+        if (sessionId == null) {
+            Log.e("EditProfileActivity", "No session ID found")
+            progressDialog.dismiss()
+            Toast.makeText(this, "Session expired, please log in again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+            return
+        }
 
         val stringRequest = object : StringRequest(
             Request.Method.GET, url,
             { response ->
                 progressDialog.dismiss()
+                Log.d("EditProfileActivity", "Response: $response")
                 try {
                     val jsonResponse = JSONObject(response)
                     if (jsonResponse.getString("status") == "success") {
@@ -158,19 +168,22 @@ class EditProfileActivity : AppCompatActivity() {
                                 .placeholder(R.drawable.default_profile)
                                 .error(R.drawable.default_profile)
                                 .into(profileImage)
+                        } else {
+                            Log.w("EditProfileActivity", "No profile picture available")
                         }
                     } else {
-                        Toast.makeText(this, "Failed to load user data", Toast.LENGTH_SHORT).show()
+                        Log.w("EditProfileActivity", "Server returned error: ${jsonResponse.getString("message")}")
+                        Toast.makeText(this, "Failed to load user data: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Log.e("EditProfileActivity", "Error parsing user data: ${e.message}")
+                    Log.e("EditProfileActivity", "Error parsing user data: ${e.message}, Response: $response")
                     Toast.makeText(this, "Error loading user data", Toast.LENGTH_SHORT).show()
                 }
             },
             { error ->
                 progressDialog.dismiss()
                 Log.e("EditProfileActivity", "Fetch error: ${error.message}")
-                Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -178,6 +191,7 @@ class EditProfileActivity : AppCompatActivity() {
                 if (sessionId != null) {
                     headers["Cookie"] = sessionId
                 }
+                Log.d("EditProfileActivity", "Headers: $headers")
                 return headers
             }
         }
