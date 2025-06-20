@@ -111,9 +111,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnChangePassword.setOnClickListener {
-            Toast.makeText(this, "Change Password clicked", Toast.LENGTH_SHORT).show()
-            // Add intent to ChangePasswordActivity
-            // startActivity(Intent(this, ChangePasswordActivity::class.java))
+            startActivity(Intent(this, ChangePasswordActivity::class.java))
         }
 
         btnHelpSupport.setOnClickListener {
