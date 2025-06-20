@@ -25,16 +25,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.HashMap
 
 class EditProfileActivity : AppCompatActivity() {
@@ -47,6 +42,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var btnSaveChanges: Button
     private lateinit var progressDialog: ProgressDialog
     private var selectedImageUri: Uri? = null
+    private var uploadFile: File? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -69,29 +65,16 @@ class EditProfileActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
         val item3D = findViewById<LinearLayout>(R.id.item3D)
         val itemProfile = findViewById<LinearLayout>(R.id.itemProfile)
 
-        itemHome.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
+        itemHome.setOnClickListener { startActivity(Intent(this, MainActivity::class.java)) }
+        item3D.setOnClickListener { } // Already on 3D screen
+        itemProfile.setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)) }
 
-        item3D.setOnClickListener {
-            // Already on 3D screen
-        }
-
-        itemProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Initialize views
         profileImage = findViewById(R.id.profileImage)
         cameraIcon = findViewById(R.id.cameraIcon)
         etFirstName = findViewById(R.id.etFirstName)
@@ -99,12 +82,11 @@ class EditProfileActivity : AppCompatActivity() {
         etEmail = findViewById(R.id.etEmail)
         btnSaveChanges = findViewById(R.id.btnSaveChanges)
 
-        // Initialize ProgressDialog
-        progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Loading user data...")
-        progressDialog.setCancelable(false)
+        progressDialog = ProgressDialog(this).apply {
+            setMessage("Loading user data...")
+            setCancelable(false)
+        }
 
-        // Check login state
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         if (!sharedPref.getBoolean("is_logged_in", false)) {
             Log.w("EditProfileActivity", "User not logged in, redirecting to SignInActivity")
@@ -113,15 +95,8 @@ class EditProfileActivity : AppCompatActivity() {
             return
         }
 
-        // Fetch and display user data
         fetchUserData()
-
-        // Camera icon click to pick image
-        cameraIcon.setOnClickListener {
-            pickImage.launch("image/*")
-        }
-
-        // Save Changes button click
+        cameraIcon.setOnClickListener { pickImage.launch("image/*") }
         btnSaveChanges.setOnClickListener {
             val firstName = etFirstName.text.toString().trim()
             val lastName = etLastName.text.toString().trim()
@@ -139,11 +114,8 @@ class EditProfileActivity : AppCompatActivity() {
     private fun fetchUserData() {
         progressDialog.show()
         val url = "https://bioview.sahans.online/app/get_user.php"
-
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val sessionId = sharedPref.getString("session_id", null)
-        if (sessionId == null) {
-            Log.e("EditProfileActivity", "No session ID found")
+        val sessionId = sharedPref.getString("session_id", null) ?: run {
             progressDialog.dismiss()
             Toast.makeText(this, "Session expired, please log in again", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, SignInActivity::class.java))
@@ -152,22 +124,17 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         val stringRequest = object : StringRequest(
-            Request.Method.GET, url,
+            Method.GET, url,
             { response ->
                 progressDialog.dismiss()
-                Log.d("EditProfileActivity", "Response: $response")
                 try {
                     val jsonResponse = JSONObject(response)
                     if (jsonResponse.getString("status") == "success") {
-                        val firstName = jsonResponse.getString("first_name")
-                        val lastName = jsonResponse.getString("last_name")
-                        val email = jsonResponse.getString("email")
+                        etFirstName.setText(jsonResponse.getString("first_name"))
+                        etLastName.setText(jsonResponse.getString("last_name"))
+                        etEmail.setText(jsonResponse.getString("email"))
                         val profilePicture = jsonResponse.getString("profile_picture")
-
-                        etFirstName.setText(firstName)
-                        etLastName.setText(lastName)
-                        etEmail.setText(email)
-
+                        Log.d("EditProfileActivity", "Profile Picture URL: $profilePicture")
                         if (profilePicture.isNotEmpty()) {
                             Glide.with(this)
                                 .load(profilePicture)
@@ -177,10 +144,10 @@ class EditProfileActivity : AppCompatActivity() {
                                 .error(R.drawable.default_profile)
                                 .into(profileImage)
                         } else {
-                            Log.w("EditProfileActivity", "No profile picture available")
+                            Log.d("EditProfileActivity", "Profile picture is empty, using default")
+                            profileImage.setImageResource(R.drawable.default_profile)
                         }
                     } else {
-                        Log.w("EditProfileActivity", "Server returned error: ${jsonResponse.getString("message")}")
                         Toast.makeText(this, "Failed to load user data: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
@@ -196,10 +163,7 @@ class EditProfileActivity : AppCompatActivity() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                if (sessionId != null) {
-                    headers["Cookie"] = sessionId
-                }
-                Log.d("EditProfileActivity", "Headers: $headers")
+                headers["Cookie"] = sessionId
                 return headers
             }
         }
@@ -212,12 +176,11 @@ class EditProfileActivity : AppCompatActivity() {
         progressDialog.setMessage("Updating user data...")
         progressDialog.show()
         val url = "https://bioview.sahans.online/app/update_user.php"
-
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val sessionId = sharedPref.getString("session_id", null)
+        val sessionId = sharedPref.getString("session_id", null) ?: return
 
         val stringRequest = object : StringRequest(
-            Request.Method.POST, url,
+            Method.POST, url,
             { response ->
                 progressDialog.dismiss()
                 try {
@@ -251,9 +214,7 @@ class EditProfileActivity : AppCompatActivity() {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                if (sessionId != null) {
-                    headers["Cookie"] = sessionId
-                }
+                headers["Cookie"] = sessionId
                 return headers
             }
         }
@@ -266,20 +227,29 @@ class EditProfileActivity : AppCompatActivity() {
         progressDialog.setMessage("Uploading image...")
         progressDialog.show()
         val url = "https://bioview.sahans.online/app/upload_profile.php"
-
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val sessionId = sharedPref.getString("session_id", null)
+        val sessionId = sharedPref.getString("session_id", null) ?: return
 
         val file = File(cacheDir, "temp_image.jpg")
         selectedImageUri?.let { uri ->
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 FileOutputStream(file).use { outputStream ->
-                    inputStream.copyTo(outputStream)
+                    val bytesCopied = inputStream.copyTo(outputStream)
+                    Log.d("EditProfileActivity", "File saved to ${file.absolutePath}, bytes copied: $bytesCopied")
                 }
+            } ?: run {
+                Log.e("EditProfileActivity", "Failed to open input stream for URI: $uri")
+                progressDialog.dismiss()
+                Toast.makeText(this, "Failed to read image file", Toast.LENGTH_SHORT).show()
+                return
             }
+        } ?: run {
+            Log.e("EditProfileActivity", "No selected image URI")
+            progressDialog.dismiss()
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        // Validate file size (2MB limit as per server)
         if (file.exists() && file.length() > 2 * 1024 * 1024) {
             progressDialog.dismiss()
             Toast.makeText(this, "File size exceeds 2MB limit", Toast.LENGTH_SHORT).show()
@@ -287,9 +257,16 @@ class EditProfileActivity : AppCompatActivity() {
             return
         }
 
+        if (!file.exists()) {
+            Log.e("EditProfileActivity", "Temporary file not created: ${file.absolutePath}")
+            progressDialog.dismiss()
+            Toast.makeText(this, "Failed to prepare image for upload", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        uploadFile = file // Store file reference for the request
         val volleyMultipartRequest = object : VolleyMultipartRequest(
-            Method.POST,
-            url,
+            Method.POST, url,
             Response.Listener { response ->
                 progressDialog.dismiss()
                 try {
@@ -298,41 +275,50 @@ class EditProfileActivity : AppCompatActivity() {
                     val jsonResponse = JSONObject(responseString)
                     if (jsonResponse.getString("status") == "success") {
                         Toast.makeText(this, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-                        fetchUserData() // Refresh profile picture
+                        fetchUserData()
                     } else {
                         Toast.makeText(this, "Image upload failed: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     Log.e("EditProfileActivity", "Error parsing upload response: ${e.message}, Data: ${String(response, Charsets.UTF_8)}")
                     Toast.makeText(this, "Error uploading image: Invalid response format", Toast.LENGTH_SHORT).show()
+                } finally {
+                    uploadFile?.delete() // Delete file after request completes
+                    uploadFile = null
                 }
             },
             Response.ErrorListener { error ->
                 progressDialog.dismiss()
                 Log.e("EditProfileActivity", "Upload error: ${error.message}")
                 Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
+                uploadFile?.delete() // Clean up on error
+                uploadFile = null
             }
         ) {
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val headers = HashMap<String, String>()
-                if (sessionId != null) {
-                    headers["Cookie"] = sessionId
-                }
+                headers["Cookie"] = sessionId
                 return headers
             }
 
             @Throws(AuthFailureError::class)
             override fun getByteData(): Map<String, File> {
                 val params = HashMap<String, File>()
-                params["image"] = file // Key "image" must match $_FILES['image'] on server
+                uploadFile?.let { file ->
+                    if (file.exists()) {
+                        Log.d("EditProfileActivity", "Adding file to request: ${file.name}, size: ${file.length()}")
+                        params["image"] = file
+                    } else {
+                        Log.e("EditProfileActivity", "File does not exist: ${file.absolutePath}")
+                    }
+                } ?: Log.e("EditProfileActivity", "No upload file available")
                 return params
             }
         }
 
         volleyMultipartRequest.retryPolicy = DefaultRetryPolicy(5000, 1, 1.0f)
         Volley.newRequestQueue(this).add(volleyMultipartRequest)
-        file.delete() // Clean up temporary file
     }
 
     // Custom VolleyMultipartRequest class
@@ -346,14 +332,10 @@ class EditProfileActivity : AppCompatActivity() {
         private val mListener: Response.Listener<ByteArray> = listener
 
         @Throws(AuthFailureError::class)
-        override fun getHeaders(): Map<String, String> {
-            return HashMap()
-        }
+        override fun getHeaders(): Map<String, String> = HashMap()
 
         @Throws(AuthFailureError::class)
-        open fun getByteData(): Map<String, File> {
-            return HashMap()
-        }
+        open fun getByteData(): Map<String, File> = HashMap()
 
         override fun deliverResponse(response: ByteArray) {
             mListener.onResponse(response)
@@ -372,15 +354,19 @@ class EditProfileActivity : AppCompatActivity() {
         override fun getBody(): ByteArray {
             val byteArrayOutputStream = java.io.ByteArrayOutputStream()
             val dataOutputStream = DataOutputStream(byteArrayOutputStream)
+            val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
 
             try {
                 val params = getByteData()
-                val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
-
+                if (params.isEmpty()) {
+                    Log.e("VolleyMultipartRequest", "No files to upload")
+                    return byteArrayOutputStream.toByteArray()
+                }
                 for ((key, file) in params) {
+                    Log.d("VolleyMultipartRequest", "Processing file: $key, path: ${file.absolutePath}, size: ${file.length()}")
                     dataOutputStream.writeBytes("--$boundary\r\n")
                     dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"$key\"; filename=\"${file.name}\"\r\n")
-                    dataOutputStream.writeBytes("Content-Type: ${getContentType(file)}\r\n\r\n") // Dynamic content type
+                    dataOutputStream.writeBytes("Content-Type: ${getContentType(file)}\r\n\r\n")
 
                     val fileInputStream = FileInputStream(file)
                     val buffer = ByteArray(1024)
@@ -391,7 +377,6 @@ class EditProfileActivity : AppCompatActivity() {
                     fileInputStream.close()
                     dataOutputStream.writeBytes("\r\n")
                 }
-
                 dataOutputStream.writeBytes("--$boundary--\r\n")
                 dataOutputStream.flush()
             } catch (e: Exception) {
@@ -402,7 +387,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         private fun getContentType(file: File): String {
-            return when (file.extension.toLowerCase()) {
+            return when (file.extension.lowercase()) {
                 "jpg", "jpeg" -> "image/jpeg"
                 "png" -> "image/png"
                 else -> "application/octet-stream"
@@ -412,9 +397,9 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::progressDialog.isInitialized && progressDialog.isShowing) {
-            progressDialog.dismiss()
-        }
+        if (::progressDialog.isInitialized && progressDialog.isShowing) progressDialog.dismiss()
+        uploadFile?.delete()
+        uploadFile = null
     }
 
     override fun onSupportNavigateUp(): Boolean {
