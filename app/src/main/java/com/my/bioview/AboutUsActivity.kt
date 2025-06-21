@@ -55,7 +55,7 @@ class AboutUsActivity : AppCompatActivity() {
 
         val webAddress = findViewById<TextView>(R.id.webaddress)
         webAddress.setOnClickListener {
-            val url = "https://bioview.sahans.online"
+            val url = "https://bioview.sahans.web.lk"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }

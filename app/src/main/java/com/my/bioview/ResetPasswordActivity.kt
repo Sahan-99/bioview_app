@@ -76,7 +76,7 @@ class ResetPasswordActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("https://bioview.sahans.online/app/reset_password.php")
+            .url("https://bioview.sahans.web.lk/app/reset_password.php")
             .post(formBody)
             .build()
 

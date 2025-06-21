@@ -111,7 +111,7 @@ class QuestionActivity : AppCompatActivity() {
 
     private fun fetchQuestions() {
         Log.d("QuestionActivity", "Fetching questions for quizId: $quizId")
-        val url = "https://bioview.sahans.online/app/get_questions.php?quiz_id=$quizId"
+        val url = "https://bioview.sahans.web.lk/app/get_questions.php?quiz_id=$quizId"
 
         val stringRequest = StringRequest(
             Request.Method.GET, url,
@@ -174,7 +174,7 @@ class QuestionActivity : AppCompatActivity() {
 
     private fun fetchAnswers(questionId: Int) {
         Log.d("QuestionActivity", "Fetching answers for questionId: $questionId")
-        val url = "https://bioview.sahans.online/app/get_answers.php?question_id=$questionId"
+        val url = "https://bioview.sahans.web.lk/app/get_answers.php?question_id=$questionId"
 
         val stringRequest = StringRequest(
             Request.Method.GET, url,

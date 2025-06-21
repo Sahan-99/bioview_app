@@ -93,7 +93,7 @@ class VerifyOTPActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("https://bioview.sahans.online/app/verify_otp.php")
+            .url("https://bioview.sahans.web.lk/app/verify_otp.php")
             .post(formBody)
             .build()
 

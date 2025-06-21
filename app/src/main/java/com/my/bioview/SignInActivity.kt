@@ -93,7 +93,7 @@ class SignInActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("https://bioview.sahans.online/app/login.php")
+            .url("https://bioview.sahans.web.lk/app/login.php")
             .post(formBody)
             .build()
 

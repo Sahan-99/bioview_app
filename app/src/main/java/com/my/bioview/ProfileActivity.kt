@@ -135,7 +135,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
-        val url = "https://bioview.sahans.online/app/get_user.php"
+        val url = "https://bioview.sahans.web.lk/app/get_user.php"
 
         // Show ProgressDialog
         progressDialog.show()
@@ -261,7 +261,7 @@ class ProfileActivity : AppCompatActivity() {
         progressDialog.show()
 
         val request = okhttp3.Request.Builder()
-            .url("https://bioview.sahans.online/app/logout.php")
+            .url("https://bioview.sahans.web.lk/app/logout.php")
             .get()
             .build()
 

@@ -83,11 +83,11 @@ class Slider1Activity : AppCompatActivity() {
     }
 
     private fun logAppUsage() {
-        val url = "https://bioview.sahans.online/app/log_usage.php"
+        val url = "https://bioview.sahans.web.lk/app/log_usage.php"
 
         val request = object : StringRequest(Method.POST, url,
             Response.Listener { response ->
-                Log.d("UsageLog", "Response (Success): '${response.trim()}' (Length: ${response.length})")
+                Log.d("UsageLog", "Response: '${response.trim()}'")
             },
             Response.ErrorListener { error ->
                 Log.e("UsageLog", "Volley Error: ${error.message}")
@@ -97,7 +97,8 @@ class Slider1Activity : AppCompatActivity() {
                 }
             }) {
             override fun getParams(): Map<String, String> {
-                return mapOf("dummy" to "1")
+                val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+                return mapOf("usage_date" to date)
             }
         }
 

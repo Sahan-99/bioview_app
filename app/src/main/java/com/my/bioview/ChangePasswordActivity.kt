@@ -94,7 +94,7 @@ class ChangePasswordActivity : AppCompatActivity() {
 
     private fun changePassword(currentPassword: String, newPassword: String) {
         progressDialog.show()
-        val url = "https://bioview.sahans.online/app/change_password.php"
+        val url = "https://bioview.sahans.web.lk/app/change_password.php"
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null) ?: run {
             progressDialog.dismiss()

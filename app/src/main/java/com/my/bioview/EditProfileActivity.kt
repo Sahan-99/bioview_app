@@ -113,7 +113,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     private fun fetchUserData() {
         progressDialog.show()
-        val url = "https://bioview.sahans.online/app/get_user.php"
+        val url = "https://bioview.sahans.web.lk/app/get_user.php"
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null) ?: run {
             progressDialog.dismiss()
@@ -175,7 +175,7 @@ class EditProfileActivity : AppCompatActivity() {
     private fun updateUserData(firstName: String, lastName: String, email: String) {
         progressDialog.setMessage("Updating user data...")
         progressDialog.show()
-        val url = "https://bioview.sahans.online/app/update_user.php"
+        val url = "https://bioview.sahans.web.lk/app/update_user.php"
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null) ?: return
 
@@ -226,7 +226,7 @@ class EditProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         progressDialog.setMessage("Uploading image...")
         progressDialog.show()
-        val url = "https://bioview.sahans.online/app/upload_profile.php"
+        val url = "https://bioview.sahans.web.lk/app/upload_profile.php"
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null) ?: return
 

@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
-        val url = "https://bioview.sahans.online/app/get_user.php"
+        val url = "https://bioview.sahans.web.lk/app/get_user.php"
 
         // Show ProgressDialog
         progressDialog.show()

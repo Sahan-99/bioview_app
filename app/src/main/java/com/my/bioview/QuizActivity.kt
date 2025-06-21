@@ -92,7 +92,7 @@ class QuizActivity : AppCompatActivity() {
         isRefreshing = true
         Log.d("QuizActivity", "Fetching quizzes at ${System.currentTimeMillis()}")
 
-        val url = "https://bioview.sahans.online/app/get_quizzes.php?t=${System.currentTimeMillis()}"
+        val url = "https://bioview.sahans.web.lk/app/get_quizzes.php?t=${System.currentTimeMillis()}"
 
         val stringRequest = object : StringRequest(
             Request.Method.GET, url,

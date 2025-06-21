@@ -76,7 +76,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("https://bioview.sahans.online/app/forgot_password.php")
+            .url("https://bioview.sahans.web.lk/app/forgot_password.php")
             .post(formBody)
             .build()
 
