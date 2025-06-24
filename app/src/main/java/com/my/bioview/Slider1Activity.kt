@@ -40,7 +40,6 @@ class Slider1Activity : AppCompatActivity() {
         val btnSkip = findViewById<TextView>(R.id.btnSkip1)
         val indicators = findViewById<LinearLayout>(R.id.indicators)
 
-        logAppUsage()
         updateIndicators(indicators, 0)
 
         btnNext.setOnClickListener {
@@ -82,30 +81,6 @@ class Slider1Activity : AppCompatActivity() {
         }
     }
 
-    private fun logAppUsage() {
-        val url = "https://bioview.sahans.web.lk/app/log_usage.php"
-
-        val request = object : StringRequest(Method.POST, url,
-            Response.Listener { response ->
-                Log.d("UsageLog", "Response: '${response.trim()}'")
-            },
-            Response.ErrorListener { error ->
-                Log.e("UsageLog", "Volley Error: ${error.message}")
-                error.networkResponse?.let {
-                    val responseData = String(it.data)
-                    Log.e("UsageLog", "Volley Error Body: $responseData")
-                }
-            }) {
-            override fun getParams(): Map<String, String> {
-                val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
-                return mapOf("usage_date" to date)
-            }
-        }
-
-        Volley.newRequestQueue(this).add(request)
-    }
-
-    // Internet Check Method
     private fun isInternetAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -119,3 +94,4 @@ class Slider1Activity : AppCompatActivity() {
         }
     }
 }
+

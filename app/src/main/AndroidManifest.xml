@@ -17,6 +17,15 @@
         android:theme="@style/Theme.BioView"
         tools:targetApi="31">
         <activity
+            android:name=".Answer"
+            android:exported="false" />
+        <activity
+            android:name=".Question"
+            android:exported="false" />
+        <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChangePasswordActivity"
             android:exported="false" />
         <activity

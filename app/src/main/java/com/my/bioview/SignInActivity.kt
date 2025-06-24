@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -119,6 +120,7 @@ class SignInActivity : AppCompatActivity() {
                         val message = json.getString("message")
                         if (response.isSuccessful && status == "success") {
                             val userType = json.getString("type")
+                            val userId = json.getInt("user_id") // Extract user_id from response
                             // Extract session cookie (PHPSESSID)
                             val cookies = response.headers("Set-Cookie")
                             var sessionId: String? = null
@@ -128,10 +130,11 @@ class SignInActivity : AppCompatActivity() {
                                     break
                                 }
                             }
-                            // Save login status and session ID to SharedPreferences
+                            // Save login status, user_id, user_type, and session ID to SharedPreferences
                             val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                             with(sharedPref.edit()) {
                                 putBoolean("is_logged_in", true)
+                                putInt("user_id", userId)
                                 putString("user_type", userType)
                                 if (sessionId != null) {
                                     putString("session_id", sessionId)
@@ -160,6 +163,7 @@ class SignInActivity : AppCompatActivity() {
                             "Error parsing response: ${e.message}",
                             Toast.LENGTH_LONG
                         ).show()
+                        Log.e("SignInActivity", "Response: $responseBody, Error: ${e.message}")
                     }
                 }
             }

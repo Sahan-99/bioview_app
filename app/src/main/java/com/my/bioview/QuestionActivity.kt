@@ -7,7 +7,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -20,8 +22,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 class QuestionActivity : AppCompatActivity() {
 
@@ -33,8 +33,10 @@ class QuestionActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private var questions = mutableListOf<Question>()
     private var currentQuestionIndex = 0
-    private val userSelections = mutableMapOf<Int, Int>() // question_id to answer_id
-    private var quizId: Int = -1 // Initialize with default value, set in onCreate
+    private val userSelections = mutableMapOf<Int, Int>()
+    private var quizId: Int = -1
+    private var userId: Int = -1
+    private lateinit var quizName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,14 +45,32 @@ class QuestionActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
-        // Retrieve quizId inside onCreate
+        // Retrieve quizId, userId, and quizName from Intent
         quizId = intent?.getIntExtra("quiz_id", -1) ?: -1
-        Log.d("QuestionActivity", "onCreate started with quizId: $quizId")
+        userId = intent?.getIntExtra("user_id", -1) ?: -1
+        quizName = intent?.getStringExtra("quiz_name") ?: "Unknown Quiz"
+        Log.d("QuestionActivity", "onCreate started with quizId: $quizId, userId: $userId, quizName: $quizName")
 
         if (quizId == -1) {
             Log.e("QuestionActivity", "quiz_id not received, defaulting to 1")
             Toast.makeText(this, "Error: Quiz ID not found", Toast.LENGTH_SHORT).show()
-            quizId = 1 // Fallback to 1 if quizId is not received
+            quizId = 1
+        }
+
+        // Check login status
+        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        if (!sharedPref.getBoolean("is_logged_in", false)) {
+            Log.w("QuestionActivity", "User not logged in, redirecting to SignInActivity")
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+            return
+        }
+        if (userId == -1) {
+            Log.w("QuestionActivity", "Invalid userId, redirecting to SignInActivity")
+            Toast.makeText(this, "Invalid user session, log in again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+            return
         }
 
         // Apply fade-in animation
@@ -101,10 +121,33 @@ class QuestionActivity : AppCompatActivity() {
                 displayQuestion()
                 Log.d("QuestionActivity", "Moved to next question: $currentQuestionIndex")
             } else {
-                // Submit logic (placeholder)
-                Log.d("QuestionActivity", "Submitting answers: $userSelections")
-                Toast.makeText(this, "Quiz submitted (placeholder)", Toast.LENGTH_SHORT).show()
-                finish()
+                if (questions.isEmpty()) {
+                    Log.e("QuestionActivity", "No questions available to submit")
+                    Toast.makeText(this, "No questions to submit", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val questionIds = questions.map { it.questionId }
+                if (questionIds.isEmpty()) {
+                    Log.e("QuestionActivity", "Question IDs list is empty")
+                    Toast.makeText(this, "Error: No question data", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val intent = Intent(this, ResultActivity::class.java).apply {
+                    putExtra("quiz_id", quizId)
+                    putIntegerArrayListExtra("questions", ArrayList(questionIds))
+                    putExtra("user_selections", userSelections as java.io.Serializable)
+                    putExtra("user_id", userId)
+                    putExtra("quiz_name", quizName) // Pass quiz name
+                    Log.d("QuestionActivity", "Passing quizId: $quizId, questions: $questionIds, selections: $userSelections, userId: $userId, quizName: $quizName")
+                }
+                try {
+                    startActivity(intent)
+                    finish()
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
+                } catch (e: Exception) {
+                    Log.e("QuestionActivity", "Failed to start ResultActivity: ${e.message}")
+                    Toast.makeText(this, "Error navigating to results", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -113,7 +156,7 @@ class QuestionActivity : AppCompatActivity() {
         Log.d("QuestionActivity", "Fetching questions for quizId: $quizId")
         val url = "https://bioview.sahans.web.lk/app/get_questions.php?quiz_id=$quizId"
 
-        val stringRequest = StringRequest(
+        val stringRequest = object : StringRequest(
             Request.Method.GET, url,
             { response ->
                 Log.d("QuestionActivity", "Questions response: $response")
@@ -153,7 +196,13 @@ class QuestionActivity : AppCompatActivity() {
                 showLoading(false)
                 Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
             }
-        )
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Cookie"] = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("session_id", null) ?: ""
+                return headers
+            }
+        }
 
         stringRequest.tag = "QUESTION_REQUEST"
         Volley.newRequestQueue(this).add(stringRequest)
@@ -176,7 +225,7 @@ class QuestionActivity : AppCompatActivity() {
         Log.d("QuestionActivity", "Fetching answers for questionId: $questionId")
         val url = "https://bioview.sahans.web.lk/app/get_answers.php?question_id=$questionId"
 
-        val stringRequest = StringRequest(
+        val stringRequest = object : StringRequest(
             Request.Method.GET, url,
             { response ->
                 Log.d("QuestionActivity", "Answers response: $response")
@@ -214,7 +263,13 @@ class QuestionActivity : AppCompatActivity() {
                 Log.e("QuestionActivity", "Network error fetching answers: ${error.message}")
                 Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
             }
-        )
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Cookie"] = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("session_id", null) ?: ""
+                return headers
+            }
+        }
 
         stringRequest.tag = "ANSWER_REQUEST"
         Volley.newRequestQueue(this).add(stringRequest)
@@ -286,30 +341,24 @@ class AnswerAdapter(
         holder.tvAnswerText.text = answer.answerText
 
         val isSelected = answer.answerId == selectedAnswerId
-// Update Card Background
         holder.cardView.setCardBackgroundColor(
             if (isSelected)
                 ContextCompat.getColor(context, R.color.primary_blue)
             else
                 ContextCompat.getColor(context, R.color.light_gray)
         )
-
-// Update Answer Text Color
         holder.tvAnswerText.setTextColor(
             if (isSelected)
                 ContextCompat.getColor(context, android.R.color.white)
             else
                 ContextCompat.getColor(context, android.R.color.black)
         )
-
-// Update Option Letter Text Color and Background
         holder.tvOptionLetter.setTextColor(
             if (isSelected)
                 ContextCompat.getColor(context, R.color.primary_blue)
             else
                 ContextCompat.getColor(context, R.color.white)
         )
-
         holder.tvOptionLetter.background = if (isSelected)
             ContextCompat.getDrawable(context, R.drawable.indicator_unselectedw)
         else

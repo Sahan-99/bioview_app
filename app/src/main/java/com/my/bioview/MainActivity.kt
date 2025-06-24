@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
@@ -111,6 +112,29 @@ class MainActivity : AppCompatActivity() {
                 false
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        logAppUsage()
+    }
+
+    private fun logAppUsage() {
+        val url = "https://bioview.sahans.web.lk/app/log_usage.php"
+
+        val request = object : StringRequest(Method.GET, url,
+            Response.Listener { response ->
+                Log.d("UsageLog", "Response: '${response.trim()}'")
+            },
+            Response.ErrorListener { error ->
+                Log.e("UsageLog", "Volley Error: ${error.message}")
+                error.networkResponse?.let {
+                    val responseData = String(it.data)
+                    Log.e("UsageLog", "Volley Error Body: $responseData")
+                }
+            }) {}
+
+        Volley.newRequestQueue(this).add(request)
     }
 
     private fun fetchUserData() {

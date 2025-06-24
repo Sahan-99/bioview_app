@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import android.content.Intent
 import android.view.KeyEvent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 class StartQuizActivity : AppCompatActivity() {
 
@@ -37,8 +36,25 @@ class StartQuizActivity : AppCompatActivity() {
 
         // Get quiz name and quiz_id from Intent
         val quizName = intent.getStringExtra("quiz_name") ?: "Unknown Quiz"
-        val quizId = intent.getIntExtra("quiz_id", -1) // Default to -1 to detect missing quiz_id
+        val quizId = intent.getIntExtra("quiz_id", -1)
         Log.d("StartQuizActivity", "Received quizName: $quizName, quizId: $quizId")
+
+        // Check login status
+        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        if (!sharedPref.getBoolean("is_logged_in", false)) {
+            Log.w("StartQuizActivity", "User not logged in, redirecting to SignInActivity")
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+            return
+        }
+        val userId = sharedPref.getInt("user_id", -1)
+        if (userId == -1) {
+            Log.w("StartQuizActivity", "Invalid userId, redirecting to SignInActivity")
+            Toast.makeText(this, "Invalid user session, log in again", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+            return
+        }
 
         // Set quiz name
         val tvQuizName = findViewById<TextView>(R.id.tvQuizName)
@@ -53,13 +69,15 @@ class StartQuizActivity : AppCompatActivity() {
             }
             val intent = Intent(this, QuestionActivity::class.java).apply {
                 putExtra("quiz_id", if (quizId == -1) 1 else quizId)
-                Log.d("StartQuizActivity", "Navigating to QuestionActivity with quizId: ${if (quizId == -1) 1 else quizId}")
+                putExtra("user_id", userId)
+                putExtra("quiz_name", quizName) // Pass quiz name
+                Log.d("StartQuizActivity", "Navigating to QuestionActivity with quizId: ${if (quizId == -1) 1 else quizId}, userId: $userId, quizName: $quizName")
             }
             startActivity(intent)
             // Fade-out animation with fallback
             try {
                 val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-                findViewById<ConstraintLayout>(R.id.main).startAnimation(fadeOut)
+                findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.main).startAnimation(fadeOut)
                 fadeOut.setAnimationListener(object : Animation.AnimationListener {
                     override fun onAnimationStart(animation: Animation?) {}
                     override fun onAnimationEnd(animation: Animation?) {
