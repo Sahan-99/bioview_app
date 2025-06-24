@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="16dp">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvQuizName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Quiz result for Unknown Quiz"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:textAlignment="center"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="32dp" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progressResult"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:progress="0"
+                android:max="100"
+                app:indicatorSize="150dp"
+                app:trackColor="#E0E0E0"
+                app:indicatorColor="@color/primary_blue"
+                app:layout_constraintTop_toBottomOf="@id/tvQuizName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="32dp" />
+
+            <TextView
+                android:id="@+id/tvPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_blue"
+                app:layout_constraintTop_toTopOf="@id/progressResult"
+                app:layout_constraintBottom_toBottomOf="@id/progressResult"
+                app:layout_constraintStart_toStartOf="@id/progressResult"
+                app:layout_constraintEnd_toEndOf="@id/progressResult" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvStats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toBottomOf="@id/progressResult"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp">
+
+                <LinearLayout
+                    android:id="@+id/llStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTotalQuestions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Total Questions: 0"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#424242"
+                        android:background="@drawable/stat_background"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvCorrectAnswers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Correct Answers: 0"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#388E3C"
+                    android:background="@drawable/stat_background"
+                    android:padding="12dp"
+                    android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvResultPercentage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Result: 0%"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1b21d8"
+                    android:background="@drawable/stat_background"
+                    android:padding="12dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnFinish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Finish"
+                android:background="@drawable/btn_rounded_stroke"
+                app:backgroundTint="@null"
+                app:strokeColor="#000000"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:padding="12dp"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toBottomOf="@id/cvStats"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp" />
+
+            <Button
+                android:id="@+id/btnHome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Back to Home"
+                android:background="@drawable/btn_rounded"
+                app:backgroundTint="@color/primary_blue"
+                app:strokeColor="@null"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="12dp"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toBottomOf="@id/btnFinish"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
