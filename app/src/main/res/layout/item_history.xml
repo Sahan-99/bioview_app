@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:layout_marginBottom="8dp"
+    android:id="@+id/cardView"> <!-- Ensure cardView ID is present -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvQuizName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Quiz Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvPercentage"/>
+
+        <TextView
+            android:id="@+id/tvPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0%"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#388E3C"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvQuizName"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvAttemptTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="2025-06-25 12:00:00"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            app:layout_constraintTop_toBottomOf="@id/tvQuizName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvTotalQuestions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Total Questions: 0"
+            android:textSize="14sp"
+            android:textColor="@color/primary_blue"
+            app:layout_constraintTop_toBottomOf="@id/tvAttemptTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvCorrectAnswers"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/tvCorrectAnswers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Correct Answers: 0"
+            android:textSize="14sp"
+            android:textColor="@color/primary_blue"
+            app:layout_constraintTop_toBottomOf="@id/tvAttemptTime"
+            app:layout_constraintStart_toEndOf="@id/tvTotalQuestions"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
