@@ -111,7 +111,7 @@
                         android:text="Result: 0%"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="#1b21d8"
+                        android:textColor="@color/primary_blue"
                     android:background="@drawable/stat_background"
                     android:padding="12dp" />
                 </LinearLayout>

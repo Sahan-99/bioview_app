@@ -5,34 +5,36 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.view.KeyEvent
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import org.json.JSONObject
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.android.volley.Cache
+import org.json.JSONObject
 
 class QuizActivity : AppCompatActivity() {
 
     private lateinit var rvQuizList: RecyclerView
     private val handler = Handler(Looper.getMainLooper())
     private val refreshInterval = 10000L
+    private lateinit var btnHistory: Button
     private var isRefreshing = false
     private var quizAdapter: QuizAdapter? = null
 
@@ -78,6 +80,12 @@ class QuizActivity : AppCompatActivity() {
         rvQuizList.layoutManager = LinearLayoutManager(this)
         quizAdapter = QuizAdapter(this)
         rvQuizList.adapter = quizAdapter
+
+        // Initialize btnHistory
+        btnHistory = findViewById(R.id.btnHistory)
+        btnHistory.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
 
         fetchQuizzes()
         startAutoRefresh()

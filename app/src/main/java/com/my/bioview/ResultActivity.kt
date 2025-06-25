@@ -167,9 +167,9 @@ class ResultActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null)
 
-        // Format attempt time to YYYY-MM-DD HH:MM:SS
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val attemptTime = sdf.format(System.currentTimeMillis())
+        Log.d("ResultActivity", "Generated attempt time: $attemptTime")
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
@@ -203,7 +203,7 @@ class ResultActivity : AppCompatActivity() {
                 params["total_questions"] = totalQuestions.toString()
                 params["correct_answers"] = correctAnswers.toString()
                 params["percentage"] = percentage.toString()
-                params["attempt_time"] = attemptTime // Use formatted time
+                params["attempt_time"] = attemptTime
                 Log.d("ResultActivity", "Sending params: $params")
                 return params
             }
