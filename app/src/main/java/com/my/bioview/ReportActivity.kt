@@ -1,5 +1,10 @@
 package com.my.bioview
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -7,6 +12,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.android.volley.NetworkResponse
@@ -16,12 +23,17 @@ import java.io.File
 import java.io.FileOutputStream
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresPermission
 import androidx.core.content.FileProvider
 
 class ReportActivity : AppCompatActivity() {
 
     private lateinit var btnGenerateReport: Button
     private var userId: Int = -1
+
+    private val CHANNEL_ID = "report_channel"
+    private val NOTIFICATION_ID = 3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +88,9 @@ class ReportActivity : AppCompatActivity() {
         btnGenerateReport.setOnClickListener {
             generateReport()
         }
+
+        // Create notification channel for Android 8.0+
+        createNotificationChannel()
     }
 
     private fun generateReport() {
@@ -109,9 +124,11 @@ class ReportActivity : AppCompatActivity() {
                 return com.android.volley.Response.success(response.data, null) // No caching
             }
 
+            @SuppressLint("MissingPermission")
             override fun deliverResponse(response: ByteArray) {
                 Log.d("ReportActivity", "Received data length in deliverResponse: ${response.size}")
                 saveAndOpenPdf(response)
+                showReportGeneratedNotification()
             }
         }
 
@@ -137,6 +154,31 @@ class ReportActivity : AppCompatActivity() {
             Log.e("ReportActivity", "Error saving or opening PDF: ${e.message}")
             Toast.makeText(this, "Error saving or opening report: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Report Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showReportGeneratedNotification() {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.logo) // Replace with your notification icon
+            .setContentTitle("Report Generate Successful")
+            .setContentText("Your report has been generated successfully!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
     override fun onDestroy() {
