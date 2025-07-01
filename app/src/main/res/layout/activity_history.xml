@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:text="Quiz Attempt History"
             android:textSize="22sp"
-            android:textStyle="bold"
+            android:textFontWeight="600"
             android:textColor="#ffffff"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

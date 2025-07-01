@@ -19,19 +19,63 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tvComplete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Quiz Completed"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_blue"
+                android:textAlignment="center"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toBottomOf="@id/Illustration"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/Subtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Thank you for your participation and dedication! You've successfully completed the quiz in BioView."
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                app:layout_constraintWidth_percent="0.9"
+                app:layout_constraintTop_toBottomOf="@id/tvComplete"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp" />
+
+            <ImageView
+                android:id="@+id/Illustration"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/complete"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                app:layout_constraintWidth_percent="0.7"
+                app:layout_constraintDimensionRatio="4:3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="0dp"
+                android:contentDescription="quiz complete Illustration" />
+
+            <TextView
                 android:id="@+id/tvQuizName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Quiz result for Unknown Quiz"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:text="Result for Unknown Quiz"
+                android:textSize="20sp"
+                android:textFontWeight="600"
                 android:textColor="#333333"
                 android:textAlignment="center"
                 app:layout_constraintWidth_percent="0.9"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/Subtitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="32dp" />
+                android:layout_marginTop="16dp" />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/progressResult"
@@ -45,7 +89,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tvQuizName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="32dp" />
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:id="@+id/tvPercentage"
@@ -135,10 +179,10 @@
                 android:layout_marginTop="24dp" />
 
             <Button
-                android:id="@+id/btnHome"
+                android:id="@+id/btnShare"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Back to Home"
+                android:text="Share"
                 android:background="@drawable/btn_rounded"
                 app:backgroundTint="@color/primary_blue"
                 app:strokeColor="@null"

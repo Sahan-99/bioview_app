@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="Quiz and Challanges"
             android:textSize="22sp"
-            android:textStyle="bold"
+            android:textFontWeight="600"
             android:textColor="#ffffff"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -73,11 +73,12 @@
                 android:src="@drawable/quiz"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                app:layout_constraintWidth_percent="1"
+                app:layout_constraintWidth_percent="1.1"
                 app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="10dp"
                 android:contentDescription="Quiz Illustration" />
 
             <!-- Quiz List -->
@@ -87,10 +88,9 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintWidth_percent="0.9"
                 app:layout_constraintTop_toBottomOf="@id/quizImage"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="26dp"
                 android:layout_marginBottom="16dp"
                 tools:listitem="@layout/item_quiz" />
 

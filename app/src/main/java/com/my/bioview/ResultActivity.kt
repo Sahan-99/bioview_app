@@ -89,15 +89,28 @@ class ResultActivity : AppCompatActivity() {
         // Set quiz name on result page
         findViewById<TextView>(R.id.tvQuizName)?.text = "Quiz result for $quizName"
 
-        btnFinish.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        val btnShare = findViewById<Button>(R.id.btnShare)
+        btnShare.setOnClickListener {
+            showSharePopup()
         }
 
         btnFinish.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
     }
+
+    private fun showSharePopup() {
+        val dialogView = layoutInflater.inflate(R.layout.popup_share, null)
+
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
 
     private fun calculateCorrectAnswers(questions: List<Int>, userSelections: Map<Int, Int>, callback: (Int) -> Unit) {
         var correct = 0
