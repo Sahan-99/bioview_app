@@ -1,23 +1,26 @@
 package com.my.bioview
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.textfield.TextInputEditText
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.io.IOException
@@ -52,7 +55,6 @@ class SignInActivity : AppCompatActivity() {
         btnSignUp = findViewById(R.id.btnSignUp)
         btnForgotPassword = findViewById(R.id.btnForgotPassword)
 
-        // Check if user is already logged in
         val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         if (sharedPref.getBoolean("is_logged_in", false)) {
             startActivity(Intent(this, MainActivity::class.java))
@@ -110,6 +112,7 @@ class SignInActivity : AppCompatActivity() {
                 }
             }
 
+            @SuppressLint("MissingPermission")
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     progressDialog.dismiss()
@@ -120,17 +123,16 @@ class SignInActivity : AppCompatActivity() {
                         val message = json.getString("message")
                         if (response.isSuccessful && status == "success") {
                             val userType = json.getString("type")
-                            val userId = json.getInt("user_id") // Extract user_id from response
-                            // Extract session cookie (PHPSESSID)
+                            val userId = json.getInt("user_id")
                             val cookies = response.headers("Set-Cookie")
                             var sessionId: String? = null
                             for (cookie in cookies) {
                                 if (cookie.contains("PHPSESSID")) {
-                                    sessionId = cookie.split(";")[0] // e.g., PHPSESSID=abc123
+                                    sessionId = cookie.split(";")[0]
                                     break
                                 }
                             }
-                            // Save login status, user_id, user_type, and session ID to SharedPreferences
+
                             val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                             with(sharedPref.edit()) {
                                 putBoolean("is_logged_in", true)
@@ -141,11 +143,16 @@ class SignInActivity : AppCompatActivity() {
                                 }
                                 apply()
                             }
+
                             Toast.makeText(
                                 applicationContext,
                                 "$message (Type: $userType)",
                                 Toast.LENGTH_SHORT
                             ).show()
+
+
+                            showLoginSuccessNotification()
+
                             val intent = Intent(applicationContext, MainActivity::class.java)
                             intent.putExtra("USER_TYPE", userType)
                             startActivity(intent)
@@ -168,5 +175,31 @@ class SignInActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showLoginSuccessNotification() {
+        val channelId = "login_channel"
+        val channelName = "Login Notifications"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.logo)
+            .setContentTitle("Login Successful")
+            .setContentText("Welcome to BioView!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.notify(1, builder.build())
     }
 }
