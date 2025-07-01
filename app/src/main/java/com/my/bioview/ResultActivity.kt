@@ -1,16 +1,20 @@
 package com.my.bioview
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.WindowInsetsControllerCompat
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
@@ -19,6 +23,8 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.HashMap
 import java.util.Locale
@@ -87,7 +93,7 @@ class ResultActivity : AppCompatActivity() {
         }
 
         // Set quiz name on result page
-        findViewById<TextView>(R.id.tvQuizName)?.text = "Quiz result for $quizName"
+        findViewById<TextView>(R.id.tvQuizName)?.text = "result for $quizName"
 
         val btnShare = findViewById<Button>(R.id.btnShare)
         btnShare.setOnClickListener {
@@ -101,14 +107,44 @@ class ResultActivity : AppCompatActivity() {
 
     private fun showSharePopup() {
         val dialogView = layoutInflater.inflate(R.layout.popup_share, null)
+        val imageView = dialogView.findViewById<ImageView>(R.id.imageShare)
+        val shareButton = dialogView.findViewById<Button>(R.id.btnShareImage)
 
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setCancelable(true)
+            .create()
 
-        val dialog = builder.create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        shareButton.setOnClickListener {
+            shareDrawableImage(R.drawable.quiz_share)
+        }
+
         dialog.show()
+    }
+
+    private fun shareDrawableImage(drawableResId: Int) {
+        val drawable = ContextCompat.getDrawable(this, drawableResId) ?: return
+        val bitmap = (drawable as android.graphics.drawable.BitmapDrawable).bitmap
+
+        // Save to cache
+        val cachePath = File(cacheDir, "images")
+        cachePath.mkdirs()
+        val file = File(cachePath, "share_image.png")
+        val stream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        stream.close()
+
+        val contentUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 
 
