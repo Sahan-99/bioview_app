@@ -1,15 +1,23 @@
 package com.my.bioview
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.android.volley.AuthFailureError
@@ -29,6 +37,9 @@ class ChangePasswordActivity : AppCompatActivity() {
     private lateinit var etConfirmPassword: TextInputEditText
     private lateinit var btnConfirmChange: Button
     private lateinit var progressDialog: ProgressDialog
+
+    private val CHANNEL_ID = "password_channel"
+    private val NOTIFICATION_ID = 4
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +101,9 @@ class ChangePasswordActivity : AppCompatActivity() {
 
             changePassword(currentPassword, newPassword)
         }
+
+        // Create notification channel for Android 8.0+
+        createNotificationChannel()
     }
 
     private fun changePassword(currentPassword: String, newPassword: String) {
@@ -104,7 +118,8 @@ class ChangePasswordActivity : AppCompatActivity() {
             return
         }
 
-        val stringRequest = object : StringRequest(
+        val stringRequest = @SuppressLint("MissingPermission")
+        object : StringRequest(
             Method.POST, url,
             { response ->
                 progressDialog.dismiss()
@@ -112,6 +127,7 @@ class ChangePasswordActivity : AppCompatActivity() {
                     val jsonResponse = JSONObject(response)
                     if (jsonResponse.getString("status") == "success") {
                         Toast.makeText(this, "Password changed successfully", Toast.LENGTH_SHORT).show()
+                        showPasswordChangeNotification()
                         finish() // Return to previous screen
                     } else {
                         Toast.makeText(this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show()
@@ -143,6 +159,31 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         stringRequest.retryPolicy = DefaultRetryPolicy(5000, 1, 1.0f)
         Volley.newRequestQueue(this).add(stringRequest)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Password Change Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showPasswordChangeNotification() {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.logo) // Replace with your notification icon
+            .setContentTitle("Password Change Successful")
+            .setContentText("Your password has been updated successfully!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
     override fun onDestroy() {
