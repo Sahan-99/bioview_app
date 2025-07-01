@@ -1,5 +1,9 @@
 package com.my.bioview
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +11,8 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -17,11 +23,13 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import android.content.Intent
+import android.os.Build
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.annotation.RequiresPermission
 
 class QuestionActivity : AppCompatActivity() {
 
@@ -38,6 +46,10 @@ class QuestionActivity : AppCompatActivity() {
     private var userId: Int = -1
     private lateinit var quizName: String
 
+    private val CHANNEL_ID = "quiz_channel"
+    private val NOTIFICATION_ID = 2
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question)
@@ -132,6 +144,7 @@ class QuestionActivity : AppCompatActivity() {
                     Toast.makeText(this, "Error: No question data", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+                showQuizCompletedNotification()
                 val intent = Intent(this, ResultActivity::class.java).apply {
                     putExtra("quiz_id", quizId)
                     putIntegerArrayListExtra("questions", ArrayList(questionIds))
@@ -282,6 +295,29 @@ class QuestionActivity : AppCompatActivity() {
         rvAnswers.visibility = if (show) View.GONE else View.VISIBLE
         btnPrevious.visibility = if (show) View.GONE else View.VISIBLE
         btnNext.visibility = if (show) View.GONE else View.VISIBLE
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showQuizCompletedNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Quiz Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.logo) // Replace with your notification icon
+            .setContentTitle("Quiz Completed")
+            .setContentText("You have completed the $quizName quiz!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
     override fun onDestroy() {
