@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var tvGreeting: TextView
     private lateinit var ivProfile: ImageView
-    private lateinit var btnQuiz: Button
     private lateinit var btnReport: Button
     private lateinit var progressDialog: ProgressDialog
 
@@ -44,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
         tvGreeting = findViewById(R.id.tvGreeting)
         ivProfile = findViewById(R.id.ivProfile)
-        btnQuiz = findViewById(R.id.btnQuiz)
         btnReport = findViewById(R.id.btnReport)
 
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
@@ -65,8 +63,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btnQuiz.setOnClickListener {
-            startActivity(Intent(this, QuizActivity::class.java))
+        ivProfile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        }
+
+        val quizBanner = findViewById<ImageView>(R.id.ivQuizBanner)
+        quizBanner.setOnClickListener {
+            val intent = Intent(this, QuizActivity::class.java)
+            startActivity(intent)
         }
 
         btnReport.setOnClickListener {
