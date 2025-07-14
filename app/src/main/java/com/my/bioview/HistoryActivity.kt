@@ -53,6 +53,12 @@ class HistoryActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val ReoprtBanner = findViewById<ImageView>(R.id.ivReportBanner)
+        ReoprtBanner.setOnClickListener {
+            val intent = Intent(this, ReportActivity::class.java)
+            startActivity(intent)
+        }
+
         rvHistory = findViewById(R.id.rvHistory)
         rvHistory.layoutManager = LinearLayoutManager(this)
         rvHistory.adapter = HistoryAdapter(historyList)
