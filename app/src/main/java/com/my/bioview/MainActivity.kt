@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -32,6 +33,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvGreeting: TextView
     private lateinit var ivProfile: ImageView
     private lateinit var progressDialog: ProgressDialog
+    private val features = listOf(
+        Pair(R.id.feature1, Pair("AR Model\nVisualization", R.drawable.ic_ar)),
+        Pair(R.id.feature2, Pair("Interactive\n3D Models", R.drawable.ic_3d_model)),
+        Pair(R.id.feature3, Pair("Voice\nExplanations", R.drawable.ic_voice)),
+        Pair(R.id.feature4, Pair("Quizzes &\nChallenges", R.drawable.ic_quiz)),
+        Pair(R.id.feature5, Pair("Learning\nReport", R.drawable.ic_report)),
+        Pair(R.id.feature6, Pair("User-Friendly\nInterface", R.drawable.ic_ui))
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
         tvGreeting = findViewById(R.id.tvGreeting)
         ivProfile = findViewById(R.id.ivProfile)
-
 
         val itemHome = findViewById<LinearLayout>(R.id.itemHome)
         val item3D = findViewById<LinearLayout>(R.id.item3D)
@@ -73,15 +81,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val features = listOf(
-            Pair(R.id.feature1, Pair("AR Model\nVisualization", R.drawable.ic_ar)),
-            Pair(R.id.feature2, Pair("Interactive\n3D Models", R.drawable.ic_3d_model)),
-            Pair(R.id.feature3, Pair("Voice\nExplanations", R.drawable.ic_voice)),
-            Pair(R.id.feature4, Pair("Quizzes &\nChallenges", R.drawable.ic_quiz)),
-            Pair(R.id.feature5, Pair("Learning\nReport", R.drawable.ic_report)),
-            Pair(R.id.feature6, Pair("User-Friendly\nInterface", R.drawable.ic_ui))
-        )
-
         // Set icons and names for each feature
         for (feature in features) {
             val view = findViewById<LinearLayout>(feature.first)
@@ -103,16 +102,17 @@ class MainActivity : AppCompatActivity() {
         // Initialize ProgressDialog
         progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Loading user data...")
-        progressDialog.setCancelable(false) // Prevent user from dismissing it
+        progressDialog.setCancelable(false)
 
         // Fetch user data
         fetchUserData()
 
-        // Set up search functionality (placeholder)
-        findViewById<EditText>(R.id.etSearch).setOnEditorActionListener { _, actionId, event ->
+        // Set up search functionality
+        val etSearch = findViewById<EditText>(R.id.etSearch)
+        etSearch.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
-                val query = findViewById<EditText>(R.id.etSearch).text.toString()
-                // Handle search query
+                val query = etSearch.text.toString().trim().toLowerCase()
+                performSearch(query)
                 true
             } else {
                 false
@@ -146,10 +146,8 @@ class MainActivity : AppCompatActivity() {
     private fun fetchUserData() {
         val url = "https://bioview.sahans.web.lk/app/get_user.php"
 
-        // Show ProgressDialog
         progressDialog.show()
 
-        // Get session ID from SharedPreferences
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val sessionId = sharedPref.getString("session_id", null)
 
@@ -160,7 +158,6 @@ class MainActivity : AppCompatActivity() {
                 val endTime = System.currentTimeMillis()
                 Log.d("MainActivity", "Fetch time: ${endTime - startTime} ms")
 
-                // Hide ProgressDialog
                 progressDialog.dismiss()
 
                 try {
@@ -173,8 +170,8 @@ class MainActivity : AppCompatActivity() {
                         if (profilePicture.isNotEmpty()) {
                             Glide.with(this)
                                 .load(profilePicture)
-                                .override(100, 100) // Resize to match ImageView (50dp ~ 100px)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL) // Enable disk caching
+                                .override(100, 100)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .placeholder(R.drawable.default_profile)
                                 .error(R.drawable.default_profile)
                                 .listener(object : RequestListener<android.graphics.drawable.Drawable> {
@@ -207,7 +204,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         Toast.makeText(this, "Failed to load user data", Toast.LENGTH_SHORT).show()
-                        // Clear login state and redirect to SignInActivity
                         with(sharedPref.edit()) {
                             putBoolean("is_logged_in", false)
                             putString("session_id", null)
@@ -225,7 +221,6 @@ class MainActivity : AppCompatActivity() {
                 }
             },
             { error ->
-                // Hide ProgressDialog on error
                 progressDialog.dismiss()
 
                 val endTime = System.currentTimeMillis()
@@ -245,16 +240,44 @@ class MainActivity : AppCompatActivity() {
         }
 
         stringRequest.retryPolicy = DefaultRetryPolicy(
-            5000, // Initial timeout in milliseconds
-            1,    // Max retries
-            1.0f  // Backoff multiplier
+            5000,
+            1,
+            1.0f
         )
         Volley.newRequestQueue(this).add(stringRequest)
     }
 
+    private fun performSearch(query: String) {
+        Log.d("MainActivity", "Searching for: $query")
+        if (query.isEmpty()) {
+            // Show all features if search is empty
+            for (feature in features) {
+                findViewById<LinearLayout>(feature.first).visibility = View.VISIBLE
+            }
+            return
+        }
+
+        // Hide all features initially
+        for (feature in features) {
+            findViewById<LinearLayout>(feature.first).visibility = View.GONE
+        }
+
+        // Filter and show matching features
+        for (feature in features) {
+            val featureName = feature.second.first.toLowerCase()
+            if (featureName.contains(query)) {
+                findViewById<LinearLayout>(feature.first).visibility = View.VISIBLE
+                Log.d("MainActivity", "Showing feature: ${feature.second.first}")
+            }
+        }
+
+        if (features.none { findViewById<LinearLayout>(it.first).visibility == View.VISIBLE }) {
+            Toast.makeText(this, "No matching features found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        // Ensure ProgressDialog is dismissed if activity is destroyed
         if (::progressDialog.isInitialized && progressDialog.isShowing) {
             progressDialog.dismiss()
         }
