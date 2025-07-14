@@ -54,7 +54,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/bottomMenu"
+        app:layout_constraintBottom_toTopOf="@id/btnHistory"
+        android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:fillViewport="true">
@@ -94,26 +95,24 @@
                 android:layout_marginBottom="16dp"
                 tools:listitem="@layout/item_quiz" />
 
-            <Button
-                android:id="@+id/btnHistory"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Quiz Attempts"
-                android:background="@drawable/btn_rounded_stroke"
-                app:backgroundTint="@null"
-                app:strokeColor="#000000"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:padding="12dp"
-                app:layout_constraintWidth_percent="0.9"
-                app:layout_constraintTop_toBottomOf="@id/rvQuizList"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="10dp"/>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Attempts History"
+        android:background="@drawable/btn_rounded_stroke"
+        app:backgroundTint="@null"
+        app:strokeColor="#000000"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:padding="12dp"
+        app:layout_constraintWidth_percent="0.9"
+        app:layout_constraintBottom_toTopOf="@id/bottomMenu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Include Bottom Menu -->
     <include
