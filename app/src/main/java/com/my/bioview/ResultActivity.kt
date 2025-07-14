@@ -7,6 +7,9 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -16,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.Response
@@ -35,13 +40,21 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var tvPercentage: TextView
     private lateinit var llStats: LinearLayout
     private lateinit var btnFinish: Button
-    private lateinit var btnHome: Button
+    private lateinit var btnViewIncorrect: Button
     private lateinit var progressDialog: ProgressDialog
     private var totalQuestions = 0
     private var correctAnswers = 0
     private var quizId = -1
     private var userId = -1
     private lateinit var quizName: String
+    private val incorrectAnswers = mutableListOf<IncorrectAnswer>() // List of incorrect answers with question text
+
+    data class IncorrectAnswer(
+        val questionId: Int,
+        val questionText: String,
+        val userAnswer: String,
+        val correctAnswer: String
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +67,7 @@ class ResultActivity : AppCompatActivity() {
         tvPercentage = findViewById(R.id.tvPercentage)
         llStats = findViewById(R.id.llStats)
         btnFinish = findViewById(R.id.btnFinish)
+        btnViewIncorrect = findViewById(R.id.btnViewIncorrect)
         progressDialog = ProgressDialog(this).apply {
             setMessage("Saving results...")
             setCancelable(false)
@@ -93,7 +107,7 @@ class ResultActivity : AppCompatActivity() {
         }
 
         // Set quiz name on result page
-        findViewById<TextView>(R.id.tvQuizName)?.text = "result for $quizName"
+        findViewById<TextView>(R.id.tvQuizName)?.text = "Result for $quizName"
 
         val btnShare = findViewById<Button>(R.id.btnShare)
         btnShare.setOnClickListener {
@@ -102,6 +116,10 @@ class ResultActivity : AppCompatActivity() {
 
         btnFinish.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        btnViewIncorrect.setOnClickListener {
+            showIncorrectAnswersDialog()
         }
     }
 
@@ -147,7 +165,6 @@ class ResultActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 
-
     private fun calculateCorrectAnswers(questions: List<Int>, userSelections: Map<Int, Int>, callback: (Int) -> Unit) {
         var correct = 0
         var completed = 0
@@ -156,33 +173,78 @@ class ResultActivity : AppCompatActivity() {
         questions.forEach { questionId ->
             val selectedAnswer = userSelections[questionId]
             if (selectedAnswer != null) {
-                val url = "https://bioview.sahans.web.lk/app/get_answers.php?question_id=$questionId"
-                val request = object : StringRequest(
-                    Request.Method.GET, url,
+                val questionUrl = "https://bioview.sahans.web.lk/app/get_questions.php?quiz_id=$quizId"
+                Volley.newRequestQueue(this).add(object : StringRequest(
+                    Request.Method.GET, questionUrl,
                     { response ->
                         try {
                             val jsonResponse = JSONObject(response)
                             if (jsonResponse.getString("status") == "success") {
-                                val answersArray = jsonResponse.getJSONArray("data")
-                                for (i in 0 until answersArray.length()) {
-                                    val answerObj = answersArray.getJSONObject(i)
-                                    Log.d("ResultActivity", "Checking answer_id: ${answerObj.getInt("answer_id")}, is_correct: ${answerObj.getInt("is_correct")}, selected: $selectedAnswer")
-                                    if (answerObj.getInt("is_correct") == 1 && answerObj.getInt("answer_id") == selectedAnswer) {
-                                        correct++
-                                        Log.d("ResultActivity", "Correct answer found for question $questionId")
+                                val questionsArray = jsonResponse.getJSONArray("data")
+                                var questionText = "Question $questionId" // Fallback
+                                for (i in 0 until questionsArray.length()) {
+                                    val questionObj = questionsArray.getJSONObject(i)
+                                    if (questionObj.getInt("question_id") == questionId) {
+                                        questionText = questionObj.getString("question_text")
                                         break
                                     }
                                 }
+
+                                val answerUrl = "https://bioview.sahans.web.lk/app/get_answers.php?question_id=$questionId"
+                                Volley.newRequestQueue(this).add(object : StringRequest(
+                                    Request.Method.GET, answerUrl,
+                                    { answerResponse ->
+                                        try {
+                                            val answerJson = JSONObject(answerResponse)
+                                            if (answerJson.getString("status") == "success") {
+                                                val answersArray = answerJson.getJSONArray("data")
+                                                var correctAnswerText = ""
+                                                var userAnswerText = ""
+                                                for (i in 0 until answersArray.length()) {
+                                                    val answerObj = answersArray.getJSONObject(i)
+                                                    val answerId = answerObj.getInt("answer_id")
+                                                    val answerText = answerObj.getString("answer_text")
+                                                    if (answerObj.getInt("is_correct") == 1) {
+                                                        correctAnswerText = answerText
+                                                    }
+                                                    if (answerId == selectedAnswer) {
+                                                        userAnswerText = answerText
+                                                    }
+                                                }
+                                                if (correctAnswerText.isNotEmpty() && userAnswerText.isNotEmpty() && correctAnswerText != userAnswerText) {
+                                                    incorrectAnswers.add(IncorrectAnswer(questionId, questionText, userAnswerText, correctAnswerText))
+                                                } else if (correctAnswerText == userAnswerText) {
+                                                    correct++
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e("ResultActivity", "Error fetching answers for $questionId: ${e.message}")
+                                        } finally {
+                                            completed++
+                                            if (completed == totalRequests) callback(correct)
+                                        }
+                                    },
+                                    { error ->
+                                        Log.e("ResultActivity", "Network error for answers $questionId: ${error.message}")
+                                        completed++
+                                        if (completed == totalRequests) callback(correct)
+                                    }
+                                ) {
+                                    override fun getHeaders(): MutableMap<String, String> {
+                                        val headers = HashMap<String, String>()
+                                        headers["Cookie"] = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("session_id", null) ?: ""
+                                        return headers
+                                    }
+                                })
                             }
                         } catch (e: Exception) {
-                            Log.e("ResultActivity", "Error fetching correct answer for $questionId: ${e.message}")
-                        } finally {
+                            Log.e("ResultActivity", "Error fetching questions for $quizId: ${e.message}")
                             completed++
                             if (completed == totalRequests) callback(correct)
                         }
                     },
                     { error ->
-                        Log.e("ResultActivity", "Network error for question $questionId: ${error.message}")
+                        Log.e("ResultActivity", "Network error fetching questions for $quizId: ${error.message}")
                         completed++
                         if (completed == totalRequests) callback(correct)
                     }
@@ -192,8 +254,7 @@ class ResultActivity : AppCompatActivity() {
                         headers["Cookie"] = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("session_id", null) ?: ""
                         return headers
                     }
-                }
-                Volley.newRequestQueue(this).add(request)
+                })
             } else {
                 completed++
                 if (completed == totalRequests) callback(correct)
@@ -266,6 +327,62 @@ class ResultActivity : AppCompatActivity() {
 
         stringRequest.tag = "RESULT_REQUEST"
         Volley.newRequestQueue(this).add(stringRequest)
+    }
+
+    private fun showIncorrectAnswersDialog() {
+        if (incorrectAnswers.isEmpty()) {
+            Toast.makeText(this, "No incorrect answers to display", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_incorrect_answers, null)
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.rvIncorrectAnswers)
+        val btnClose = dialogView.findViewById<Button>(R.id.btnCloseDialog)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = IncorrectAnswerAdapter(incorrectAnswers)
+
+        // Set a reasonable width and height for the dialog
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        // Adjust dialog size dynamically
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.9).toInt(), // 90% of screen width
+            (resources.displayMetrics.heightPixels * 0.7).toInt() // 70% of screen height
+        )
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        btnClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
+    private class IncorrectAnswerAdapter(private val incorrectAnswers: List<IncorrectAnswer>) :
+        RecyclerView.Adapter<IncorrectAnswerAdapter.ViewHolder>() {
+
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val tvQuestionId: TextView = itemView.findViewById(R.id.tvQuestionId)
+            val tvQuestionText: TextView = itemView.findViewById(R.id.tvQuestionText)
+            val tvUserAnswer: TextView = itemView.findViewById(R.id.tvUserAnswer)
+            val tvCorrectAnswer: TextView = itemView.findViewById(R.id.tvCorrectAnswer)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_incorrect_answer, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val answer = incorrectAnswers[position]
+            holder.tvQuestionId.text = "Question ID: ${answer.questionId}"
+            holder.tvQuestionText.text = answer.questionText
+            holder.tvUserAnswer.text = "Your Answer: ${answer.userAnswer}"
+            holder.tvCorrectAnswer.text = "Correct Answer: ${answer.correctAnswer}"
+        }
+
+        override fun getItemCount(): Int = incorrectAnswers.size
     }
 
     override fun onDestroy() {

@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BioView"
         tools:targetApi="31">
+        <activity
+            android:name=".Question"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -42,9 +45,6 @@
             android:exported="false" />
         <activity
             android:name=".Answer"
-            android:exported="false" />
-        <activity
-            android:name=".Question"
             android:exported="false" />
         <activity
             android:name=".ResultActivity"
