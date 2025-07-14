@@ -50,31 +50,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="4dp" />
 
-        <TextView
-            android:id="@+id/tvTotalQuestions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Total Questions: 0"
-            android:textSize="14sp"
-            android:textColor="@color/primary_blue"
-            app:layout_constraintTop_toBottomOf="@id/tvAttemptTime"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvCorrectAnswers"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp" />
 
-        <TextView
-            android:id="@+id/tvCorrectAnswers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Correct Answers: 0"
-            android:textSize="14sp"
-            android:textColor="@color/primary_blue"
-            app:layout_constraintTop_toBottomOf="@id/tvAttemptTime"
-            app:layout_constraintStart_toEndOf="@id/tvTotalQuestions"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

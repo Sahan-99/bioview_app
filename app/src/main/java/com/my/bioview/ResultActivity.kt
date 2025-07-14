@@ -117,7 +117,8 @@ class ResultActivity : AppCompatActivity() {
         }
 
         btnFinish.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, HistoryActivity::class.java))
+            finish()
         }
 
         tvIncorrectAnswers.setOnClickListener {

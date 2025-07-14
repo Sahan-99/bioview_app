@@ -14,8 +14,7 @@ class HistoryAdapter(private val historyList: List<QuizAttempt>) : RecyclerView.
     class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvQuizName: TextView = itemView.findViewById(R.id.tvQuizName)
         val tvAttemptTime: TextView = itemView.findViewById(R.id.tvAttemptTime)
-        val tvTotalQuestions: TextView = itemView.findViewById(R.id.tvTotalQuestions)
-        val tvCorrectAnswers: TextView = itemView.findViewById(R.id.tvCorrectAnswers)
+
         val tvPercentage: TextView = itemView.findViewById(R.id.tvPercentage)
         val cardView: CardView = itemView.findViewById(R.id.cardView)
     }
@@ -30,8 +29,7 @@ class HistoryAdapter(private val historyList: List<QuizAttempt>) : RecyclerView.
         val attempt = historyList[position]
         holder.tvQuizName.text = attempt.title
         holder.tvAttemptTime.text = attempt.attemptTime
-        holder.tvTotalQuestions.text = "Total Questions: ${attempt.totalQuestions}"
-        holder.tvCorrectAnswers.text = "Correct Answers: ${attempt.correctAnswers}"
+
         holder.tvPercentage.text = String.format("%.1f%%", attempt.percentage)
         holder.cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, if (position % 2 == 0) R.color.light_gray else R.color.white))
     }

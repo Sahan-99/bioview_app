@@ -228,6 +228,9 @@ class QuestionActivity : AppCompatActivity() {
             tvProgress.text = "Question ${currentQuestionIndex + 1} of ${minOf(10, questions.size)}"
             tvQuestion.text = question.questionText
             fetchAnswers(question.questionId)
+
+            // Update Next button text
+            btnNext.text = if (currentQuestionIndex == questions.size - 1) "Submit" else "Next"
         } else {
             Log.e("QuestionActivity", "No question to display at index $currentQuestionIndex")
             Toast.makeText(this, "No question available", Toast.LENGTH_SHORT).show()
