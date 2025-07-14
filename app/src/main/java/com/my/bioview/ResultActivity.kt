@@ -40,7 +40,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var tvPercentage: TextView
     private lateinit var llStats: LinearLayout
     private lateinit var btnFinish: Button
-    private lateinit var btnViewIncorrect: Button
+    private lateinit var tvIncorrectAnswers: TextView
     private lateinit var progressDialog: ProgressDialog
     private var totalQuestions = 0
     private var correctAnswers = 0
@@ -67,7 +67,7 @@ class ResultActivity : AppCompatActivity() {
         tvPercentage = findViewById(R.id.tvPercentage)
         llStats = findViewById(R.id.llStats)
         btnFinish = findViewById(R.id.btnFinish)
-        btnViewIncorrect = findViewById(R.id.btnViewIncorrect)
+        tvIncorrectAnswers = findViewById(R.id.tvIncorrectAnswers)
         progressDialog = ProgressDialog(this).apply {
             setMessage("Saving results...")
             setCancelable(false)
@@ -101,6 +101,8 @@ class ResultActivity : AppCompatActivity() {
         totalQuestions = questions.size
         calculateCorrectAnswers(questions, userSelections) { correct ->
             correctAnswers = correct
+            val incorrectCount = totalQuestions - correct
+            tvIncorrectAnswers.text = "Incorrect Answers: $incorrectCount"
             val percentage = if (totalQuestions > 0) (correctAnswers.toDouble() / totalQuestions * 100).toInt() else 0
             updateUI(totalQuestions, correctAnswers, percentage)
             saveResult(quizId, userId, correctAnswers, totalQuestions, percentage)
@@ -118,9 +120,13 @@ class ResultActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
-        btnViewIncorrect.setOnClickListener {
+        tvIncorrectAnswers.setOnClickListener {
             showIncorrectAnswersDialog()
         }
+    }
+
+    fun onIncorrectAnswersClick(view: View) {
+        showIncorrectAnswersDialog()
     }
 
     private fun showSharePopup() {
@@ -267,7 +273,6 @@ class ResultActivity : AppCompatActivity() {
         tvPercentage.text = "$percentage%"
         llStats.findViewById<TextView>(R.id.tvTotalQuestions)?.text = "Total Questions: $total"
         llStats.findViewById<TextView>(R.id.tvCorrectAnswers)?.text = "Correct Answers: $correct"
-        llStats.findViewById<TextView>(R.id.tvResultPercentage)?.text = "Result: $percentage%"
         Log.d("ResultActivity", "UI updated - Total: $total, Correct: $correct, Percentage: $percentage")
     }
 
@@ -342,16 +347,14 @@ class ResultActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = IncorrectAnswerAdapter(incorrectAnswers)
 
-        // Set a reasonable width and height for the dialog
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setCancelable(true)
             .create()
 
-        // Adjust dialog size dynamically
         dialog.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.9).toInt(), // 90% of screen width
-            (resources.displayMetrics.heightPixels * 0.7).toInt() // 70% of screen height
+            (resources.displayMetrics.widthPixels * 0.9).toInt(),
+            (resources.displayMetrics.heightPixels * 0.8).toInt()
         )
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 

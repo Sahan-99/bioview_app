@@ -149,15 +149,19 @@
                         android:layout_marginBottom="8dp" />
 
                     <TextView
-                        android:id="@+id/tvResultPercentage"
+                        android:id="@+id/tvIncorrectAnswers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Result: 0%"
+                        android:text="Incorrect Answers: 0"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@color/primary_blue"
+                        android:textColor="#ff0000"
                         android:background="@drawable/stat_background"
-                        android:padding="12dp" />
+                        android:padding="12dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:onClick="onIncorrectAnswersClick"
+                        android:layout_marginBottom="8dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -194,23 +198,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp" />
-
-            <Button
-                android:id="@+id/btnViewIncorrect"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="View Incorrect Answers"
-                android:background="@drawable/btn_rounded"
-                app:backgroundTint="@color/light_gray"
-            app:strokeColor="@null"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:padding="12dp"
-            app:layout_constraintWidth_percent="0.9"
-            app:layout_constraintTop_toBottomOf="@id/btnShare"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
