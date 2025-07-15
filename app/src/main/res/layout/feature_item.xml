@@ -16,8 +16,8 @@
         android:layout_gravity="center"
         android:src="@drawable/ic_home"
         android:background="@drawable/white_box_background"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"/>
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"/>
 
     <TextView
         android:id="@+id/feature_name"
