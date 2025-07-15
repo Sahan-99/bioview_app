@@ -76,21 +76,37 @@
                 </LinearLayout>
 
                 <!-- Search Bar -->
-                <EditText
-                    android:id="@+id/etSearch"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Search..."
-                    android:textSize="16sp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:background="@drawable/bg_edittext_rounded"
-                    android:textColorHint="#757575"
-                    android:textColor="#212121"
-                    android:drawableStart="@android:drawable/ic_menu_search"
-                    android:drawablePadding="10dp"
+                    android:layout_marginTop="25dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginTop="25dp" />
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivSearchIcon"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@android:drawable/ic_menu_search"
+                        android:contentDescription="Search Icon"
+                        android:layout_marginRight="10dp"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <EditText
+                        android:id="@+id/etSearch"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="Search..."
+                        android:textSize="16sp"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="16dp"
+                        android:textColorHint="#757575"
+                        android:textColor="#212121"
+                        android:background="@null" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Cover Image -->

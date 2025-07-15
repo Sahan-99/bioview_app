@@ -115,6 +115,13 @@ class MainActivity : AppCompatActivity() {
 
         // Set up search functionality
         val etSearch = findViewById<EditText>(R.id.etSearch)
+        val ivSearchIcon = findViewById<ImageView>(R.id.ivSearchIcon)
+
+        ivSearchIcon.setOnClickListener {
+            val query = etSearch.text.toString().trim().toLowerCase()
+            performSearch(query)
+        }
+
         etSearch.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
                 val query = etSearch.text.toString().trim().toLowerCase()

@@ -5,13 +5,13 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     app:cardCornerRadius="15dp"
-    app:cardElevation="8dp"
-    android:background="@color/white">
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/bg_edittext_rounded"
         android:padding="16dp">
 
         <TextView
