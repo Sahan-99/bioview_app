@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Set icons and names for each feature
+        // Set icons, names, and click listeners for each feature
         for (feature in features) {
             val view = findViewById<LinearLayout>(feature.first)
             val icon = view.findViewById<ImageView>(R.id.feature_icon)
@@ -89,6 +90,11 @@ class MainActivity : AppCompatActivity() {
 
             icon.setImageResource(feature.second.second)
             name.text = feature.second.first
+
+            // Set click listener for popup
+            view.setOnClickListener {
+                showFeaturePopup(feature.second.first, feature.second.second)
+            }
         }
 
         // Check login state
@@ -250,19 +256,16 @@ class MainActivity : AppCompatActivity() {
     private fun performSearch(query: String) {
         Log.d("MainActivity", "Searching for: $query")
         if (query.isEmpty()) {
-            // Show all features if search is empty
             for (feature in features) {
                 findViewById<LinearLayout>(feature.first).visibility = View.VISIBLE
             }
             return
         }
 
-        // Hide all features initially
         for (feature in features) {
             findViewById<LinearLayout>(feature.first).visibility = View.GONE
         }
 
-        // Filter and show matching features
         for (feature in features) {
             val featureName = feature.second.first.toLowerCase()
             if (featureName.contains(query)) {
@@ -274,6 +277,41 @@ class MainActivity : AppCompatActivity() {
         if (features.none { findViewById<LinearLayout>(it.first).visibility == View.VISIBLE }) {
             Toast.makeText(this, "No matching features found", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showFeaturePopup(featureName: String, featureIconRes: Int) {
+        val explanation = when (featureName) {
+            "AR Model\nVisualization" -> "Explore realistic 3D augmented reality models of biological systems by scanning textbook images for an immersive learning experience with BioView."
+            "Interactive\n3D Models" -> "Rotate, zoom, and interact with detailed biological structures in 3D to deepen your understanding through an engaging, hands-on approach."
+            "Voice\nExplanations" -> "Tap annotation buttons to hear clear voice explanations that help students grasp complex biological concepts with ease and clarity."
+            "Quizzes &\nChallenges" -> "After exploring models, challenge yourself with interactive quizzes that reinforce learning and boost your biology knowledge in a fun way."
+            "Learning\nReport" -> "Monitor your learning journey with comprehensive reports that highlight completed topics, quiz scores, and areas that need improvement."
+            "User-Friendly\nInterface" -> "Navigate effortlessly through BioView's clean and user-friendly design, created specifically for students to learn quickly and comfortably."
+            else -> "More information coming soon!"
+        }
+
+        // Inflate the custom layout
+        val dialogView = layoutInflater.inflate(R.layout.custom_popup_feature, null)
+        val tvPopupTitle = dialogView.findViewById<TextView>(R.id.tvPopupTitle)
+        val tvPopupExplanation = dialogView.findViewById<TextView>(R.id.tvPopupExplanation)
+        val btnClosePopup = dialogView.findViewById<Button>(R.id.btnClosePopup)
+
+        // Set data
+        tvPopupTitle.text = featureName
+        tvPopupExplanation.text = explanation
+
+        // Create and configure the dialog
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        // Set close button action
+        btnClosePopup.setOnClickListener { dialog.dismiss() }
+
+        // Apply custom animations
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.show()
     }
 
     override fun onDestroy() {
