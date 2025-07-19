@@ -42,6 +42,7 @@ class HistoryActivity : AppCompatActivity() {
         itemHome.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         item3D.setOnClickListener {
