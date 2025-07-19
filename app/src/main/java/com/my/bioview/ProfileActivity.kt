@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -41,7 +42,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var profileImage: ImageView
     private lateinit var profileName: TextView
-    private lateinit var progressDialog: android.app.ProgressDialog
+    private lateinit var ivReportBanner: ImageView
+    private lateinit var ivTeacherBanner: ImageView
+    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +71,7 @@ class ProfileActivity : AppCompatActivity() {
         itemHome.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         item3D.setOnClickListener {
@@ -82,9 +86,16 @@ class ProfileActivity : AppCompatActivity() {
         // Initialize views
         profileImage = findViewById(R.id.profileImage)
         profileName = findViewById(R.id.profileName)
+        ivReportBanner = findViewById(R.id.ivReportBanner)
+        ivTeacherBanner = findViewById(R.id.ivTeacherBanner)
+
+        ivReportBanner.setOnClickListener {
+            val intent = Intent(this, ReportActivity::class.java)
+            startActivity(intent)
+        }
 
         // Initialize ProgressDialog
-        progressDialog = android.app.ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Loading user data...")
         progressDialog.setCancelable(false)
 
@@ -123,15 +134,15 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnLogOut.setOnClickListener {
-                AlertDialog.Builder(this)
-                    .setTitle("Confirm logout from BioView")
-                    .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        logoutUser()
-                    }
-                    .setNegativeButton("No", null)
-                    .show()
-            }
+            AlertDialog.Builder(this)
+                .setTitle("Confirm logout from BioView")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes") { _, _ ->
+                    logoutUser()
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
     }
 
     private fun fetchUserData() {
@@ -160,8 +171,15 @@ class ProfileActivity : AppCompatActivity() {
                         val firstName = jsonResponse.getString("first_name")
                         val lastName = jsonResponse.getString("last_name")
                         val profilePicture = jsonResponse.getString("profile_picture")
-                        Log.d("ProfileActivity", "Profile Picture URL: $profilePicture")
+                        val userType = jsonResponse.getString("user_type") // Assuming this field exists
+
+                        Log.d("ProfileActivity", "User Type: $userType, Profile Picture URL: $profilePicture")
                         profileName.text = "$firstName $lastName" // Concatenate first name and last name
+
+                        // Show or hide Banner based on user type
+                        ivReportBanner.visibility = if (userType.toLowerCase() == "student") View.VISIBLE else View.GONE
+                        ivTeacherBanner.visibility = if (userType.toLowerCase() == "teacher") View.VISIBLE else View.GONE
+
                         if (profilePicture.isNotEmpty()) {
                             Glide.with(this)
                                 .load(profilePicture)
@@ -212,6 +230,7 @@ class ProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "Error loading user data", Toast.LENGTH_SHORT).show()
                     profileName.text = "User"
                     profileImage.setImageResource(R.drawable.default_profile)
+                    ivReportBanner.visibility = View.GONE // Hide on error
                 }
             },
             { error ->
@@ -223,6 +242,7 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show()
                 profileName.text = "User"
                 profileImage.setImageResource(R.drawable.default_profile)
+                ivReportBanner.visibility = View.GONE // Hide on error
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
