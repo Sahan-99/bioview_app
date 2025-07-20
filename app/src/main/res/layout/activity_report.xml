@@ -102,6 +102,19 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:gravity="center" />
 
+                    <TextView
+                        android:id="@+id/tvSubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Generate your learning report to review your latest performance. This report includes your most recent 10 quiz results, helping you track your progress and improve over time."
+                        android:textSize="14sp"
+                        android:textColor="#000"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvReTitle"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:gravity="center" />
+
                     <Button
                         android:id="@+id/btnGenerateReport"
                         android:layout_width="0dp"
@@ -111,7 +124,7 @@
                         android:textColor="#ffffff"
                         android:textSize="18sp"
                         android:padding="12dp"
-                        app:layout_constraintTop_toBottomOf="@id/tvReTitle"
+                        app:layout_constraintTop_toBottomOf="@id/tvSubTitle"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="20dp" />

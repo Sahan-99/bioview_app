@@ -3,6 +3,7 @@ package com.my.bioview
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -44,6 +45,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var profileName: TextView
     private lateinit var ivReportBanner: ImageView
     private lateinit var ivTeacherBanner: ImageView
+    private lateinit var ivAdminBanner: ImageView
     private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,11 +90,25 @@ class ProfileActivity : AppCompatActivity() {
         profileName = findViewById(R.id.profileName)
         ivReportBanner = findViewById(R.id.ivReportBanner)
         ivTeacherBanner = findViewById(R.id.ivTeacherBanner)
+        ivAdminBanner = findViewById(R.id.ivAdminBanner)
 
         ivReportBanner.setOnClickListener {
             val intent = Intent(this, ReportActivity::class.java)
             startActivity(intent)
         }
+
+        ivTeacherBanner.setOnClickListener {
+            val intent = Intent(this, AdminRequestActivity::class.java)
+            startActivity(intent)
+        }
+
+        ivAdminBanner.setOnClickListener {
+            val url = "https://bioview.sahans.web.lk/bv-admin"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
+
 
         // Initialize ProgressDialog
         progressDialog = ProgressDialog(this)
@@ -179,6 +195,7 @@ class ProfileActivity : AppCompatActivity() {
                         // Show or hide Banner based on user type
                         ivReportBanner.visibility = if (userType.toLowerCase() == "student") View.VISIBLE else View.GONE
                         ivTeacherBanner.visibility = if (userType.toLowerCase() == "teacher") View.VISIBLE else View.GONE
+                        ivAdminBanner.visibility = if (userType.toLowerCase() == "admin") View.VISIBLE else View.GONE
 
                         if (profilePicture.isNotEmpty()) {
                             Glide.with(this)
