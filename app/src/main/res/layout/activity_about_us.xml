@@ -126,7 +126,7 @@ brings biology to life using Augmented Reality (AR). Scan an image to explore in
                 android:id="@+id/emailaddress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="support@bioview.sahans.web.lk"
+                android:text="support@sahans.web.lk"
                 android:textSize="14sp"
                 android:textColor="#000"
                 app:layout_constraintTop_toBottomOf="@id/email"
