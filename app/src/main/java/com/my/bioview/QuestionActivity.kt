@@ -179,7 +179,7 @@ class QuestionActivity : AppCompatActivity() {
                     if (jsonResponse.getString("status") == "success") {
                         val questionsArray = jsonResponse.getJSONArray("data")
                         questions.clear()
-                        for (i in 0 until minOf(10, questionsArray.length())) {
+                        for (i in 0 until minOf(30, questionsArray.length())) {
                             val questionObj = questionsArray.getJSONObject(i)
                             val question = Question(
                                 questionObj.getInt("question_id"),
@@ -225,7 +225,7 @@ class QuestionActivity : AppCompatActivity() {
         Log.d("QuestionActivity", "Displaying question at index: $currentQuestionIndex")
         if (questions.isNotEmpty() && currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]
-            tvProgress.text = "Question ${currentQuestionIndex + 1} of ${minOf(10, questions.size)}"
+            tvProgress.text = "Question ${currentQuestionIndex + 1} of ${minOf(30, questions.size)}"
             tvQuestion.text = question.questionText
             fetchAnswers(question.questionId)
 
